@@ -1,0 +1,18 @@
+/*General Style Guide*/
+
+	*
+	{
+		margin:0;
+	}
+
+	html, body
+	{
+		height: 100%;
+		width: 100%;
+	}
+	
+	body
+	{
+		background-color: green;
+	}
+	
