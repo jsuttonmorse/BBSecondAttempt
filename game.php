@@ -5,14 +5,56 @@
 <!--Title-->
 	<title>Game on!</title>
 <!--Styles-->
-
+	<link rel="stylesheet" type="text/css" title="main" href="styles/bloodbowl.css">
+	<link rel="stylesheet" type="text/css" title="mobile" href="styles/bloodbowlmobile.css">
+	<link rel="stylesheet" type="text/css" title="testing" href="styles/test.css">
+	
 <!--Scripts-->
+	<script type="text/javascript">
+	var team1score=0;
+	var team2score=0;
+	
+	function playgame()
+	{
+		/*This is just going to advance the turns 1-8 and halves 1-8*/
+		var half;
+		var turn;
+		var activeteam;
+		var justscored="TRUE";
+		
+		for (half=1; half<=2; half++)
+		{
+			for (turn=1; turn<=8; turn++)
+			{
+				for (activeteam=1; activeteam<=2; activeteam++)
+				{
+					/*Do team 1 stuff*/
+					alert("Half " + half + " and turn " + turn + " for team " + activeteam);
+					
+					/*Do team 2 stuff*/
+					alert("Half " + half + "and turn" + turn + " for team " + activeteam);
+				}/*Active team loop between 1 & 2*/
+			}/*Turns 1-8*/
+		}/*Halfs 1 and 2*/
+	}/*End function playgame*/
+	
+	function setup(receivingteam)
+	{
+		/*Set up the receiving team*/
+		alert("set up the receiving team: " + receivingteam);
+		
+		/*set up the kicking team*/
+		alert("set up the kicking team: ");
+	}/*End function setup*/
+	</script>
+	
 </head>
 
 <body>
-
+	<button onclick="playgame()">Play!</button>
 	<!--Divs for the basic sections-->
-	<div class="board">
+	<div class="board" id="board">
+	
 	Board
 	</div><!--board-->
 	
