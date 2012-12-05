@@ -11,40 +11,72 @@
 	
 <!--Scripts-->
 	<script type="text/javascript">
-	var team1score=0;
-	var team2score=0;
+	var team1 = ["Reikland Reavers", 3, 0]; /*Name, re-rolls, score*/
+	var team2 = ["Athelorn Avengers", 2, 0]; /*Name, re-rolls, score*/
+	var teams = [team1, team2];
+	
 	
 	function playgame()
 	{
 		/*This is just going to advance the turns 1-8 and halves 1-8*/
 		var half;
 		var turn;
-		var activeteam;
-		var justscored="TRUE";
+		var activeTeam;
+		var justScored=1;
+		
 		
 		for (half=1; half<=2; half++)
 		{
+			setup(1); 
 			for (turn=1; turn<=8; turn++)
 			{
-				for (activeteam=1; activeteam<=2; activeteam++)
+				for (activeTeam=0; activeTeam<=1; activeTeam++)
 				{
-					/*Do team 1 stuff*/
-					alert("Half " + half + " and turn " + turn + " for team " + activeteam);
-					
-					/*Do team 2 stuff*/
-					alert("Half " + half + "and turn" + turn + " for team " + activeteam);
+
+					justScored=prompt("Half " + half + " and turn " + turn + " for team " + teams[activeTeam][0] + ".  Did either team score?", "0 indicates team 1 scored & 1 indicates team 2 scored.");
+					if (justScored==0 || justScored==1)
+					{
+						teams[justScored][2]++;
+						alert(teams[justScored][0] + " scored on half " + half + " and turn " + turn + ". The current score is: " + teams[0][2] + " - " + teams[1][2] + ".");
+						if (activeTeam!=justScored)
+						{
+							alert("Oddly, " + teams[justScored][0] + " scored on " + teams[activeTeam][0] + "'s turn. Advance the turn marker.");
+							if (activeTeam==0)
+							{
+								activeTeam=1;
+							}
+							else
+							{
+								activeTeam=0;
+								turn++;
+							}
+						}
+						setup(justScored);
+					}
 				}/*Active team loop between 1 & 2*/
 			}/*Turns 1-8*/
+			teams.reverse();
 		}/*Halfs 1 and 2*/
 	}/*End function playgame*/
 	
-	function setup(receivingteam)
+	function setup(kickingTeam)
 	{
+		var receivingTeam;
+		if (kickingTeam==0)
+		{
+			receivingTeam=1;
+		}
+		else
+		{
+			receivingTeam=0;
+		}
+		
+			
 		/*Set up the receiving team*/
-		alert("set up the receiving team: " + receivingteam);
+		alert("set up the receiving team: " + teams[receivingTeam][0]);
 		
 		/*set up the kicking team*/
-		alert("set up the kicking team: ");
+		alert("set up the kicking team: " + teams[kickingTeam][0]);
 	}/*End function setup*/
 	</script>
 	
