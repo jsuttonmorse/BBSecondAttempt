@@ -69,13 +69,10 @@
 			<p>League Name: <input type="text" maxlength="50" name="leagueName"/></p>
 			<p>League Owner: <input type="text" maxlength="50" name="leagueOwner"/></p>
 			<p>Max Teams: <input type="text" maxlength="11" name="maxTeams"/></p>
-		<input type="submit" name="leagueSubmit"/>
+			<input type="submit" name="leagueSubmit"/>
+		</form>
 	</div><!--Create new league-->
-	
-	<div id="addTeamToLeague">
-		<p>Add team to league</p>
-	</div><!--Adding a team to a league-->
-	<!--Here's where I start outputting leagues-->
+	<!--Load up the list of leagues-->
 	<?php
 		$mysqli = new mysqli("localhost", "root", "root", "BloodBowl02");
 		$resultLeagues = $mysqli->query("
@@ -90,6 +87,23 @@
 				printf("Query failed: %s\n", $mysqli->error);
   				exit;
 			}
+	?>
+	<div id="addTeamToLeague">
+		<p>Add team to league</p>
+		<form
+			method = "post"
+			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"
+			onsubmit="return validateForm()"
+			name="TeamAddToLeague">
+				<p>Team: <input type = "text" maxlength = "50" name = "teamToAdd"/></p>
+				<p>League: <input type = "text" maxlength = "50" name = "leagueToAddTo"/></p>
+			<input type="submit" name="teamAddToLeague"/>
+		</form>
+	</div><!--Adding a team to a league-->
+	
+	
+	<!--Here's where I start outputting leagues-->
+	<?php
 			while (list($leagueName,
 						$leagueOwner, 
 						$maxTeams,
