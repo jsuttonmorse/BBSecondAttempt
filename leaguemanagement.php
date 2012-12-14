@@ -4,23 +4,88 @@
 
 <head>
 	<title>Manage a League</title>
+	
+	<script type="text/javascript">
+		function validateForm()
+		{
+			var x = document.forms["LeagueAddForm"]["leagueName"].value;
+			alert(x);
+		}
+	</script>
 </head>
 
 <body>
 	Under Construction.
 	<div id="newLeague">
+		<?php /*Check if data has been submitted to add a new league & add if if necessary*/
+			printf("Hello, if clause");
+			if (isset ($_POST['leagueName'])) /*data submitted via form, so add the league*/
+			{
+				printf("Hi There!");
+				$leagueName=($_POST['leagueName']);
+				$leagueOwner=($_POST['leagueOwner']);
+				$maxTeams=($_POST['maxTeams']);
+				$mysqli=new mysqli("localhost", "root", "root", "BloodBowl02");
+				$result = $mysqli->query("
+									call sp_leagueAdd('" .
+									$leagueName . "'" .
+									", '" . $leagueOwner . "'" .
+									", '" . $maxTeams . "'" .
+									", @message, @leagueID)
+									");
+				if (!$result)
+				{
+					printf("Query failed: %s\n", $mysqli->error);
+					exit;
+				}
+				else
+				{
+					$result1 = $mysqli->query("select @message, @leagueID");
+					if (!result1)
+					{
+						printf("Query failed: %s\n", $mysqli->error);
+						exit;
+					}
+					else
+					{
+						printf("Message: " . $row[0] . " ID: " . $row[1]);
+					}
+				}
+				/*Now want to delete the $_POST values for leagueName, etc*/
+				/*Note that if I refresh there's the option to resubmit*/
+				/*Look into Post/Redirect/Get - http://en.wikipedia.org/wiki/Post/Redirect/Get*/
+				
+				
+			}/*There was data submitted, so the league was added*/
+			
+		
+		?><!--php to add a new league if there's data from the form-->
 		<p>Create New League</p>	
+		<form 
+			method = "post" 
+			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"	
+			onsubmit="return validateForm()"
+			name = "LeagueAddForm">
+			<p>League Name: <input type="text" maxlength="50" name="leagueName"/></p>
+			<p>League Owner: <input type="text" maxlength="50" name="leagueOwner"/></p>
+			<p>Max Teams: <input type="text" maxlength="11" name="maxTeams"/></p>
+		<input type="submit" name="leagueSubmit"/>
 	</div><!--Create new league-->
+	
+	<div id="addTeamToLeague">
+		<p>Add team to league</p>
+	</div><!--Adding a team to a league-->
+	<!--Here's where I start outputting leagues-->
 	<?php
 		$mysqli = new mysqli("localhost", "root", "root", "BloodBowl02");
-		$result = $mysqli->query("
+		$resultLeagues = $mysqli->query("
 				SELECT l.LeagueName, l.leagueOwner, l.MaxTeams
 				, (SELECT count(fkLeagueID) 
 					FROM jtLeagueTeam WHERE 
 					jtLeagueTeam.fkLeagueID = l.LeagueID) AS CurrentTeams
 				FROM league l
 				");
-			if (!$result)
+			if (!$resultLeagues)
 			{
 				printf("Query failed: %s\n", $mysqli->error);
   				exit;
@@ -30,7 +95,7 @@
 						$maxTeams,
 						$currentTeams
 						)
-					= $result->fetch_row())
+					= $resultLeagues->fetch_row())
 			{
 			/*So far, I've opened a while loop to show all leagues*/?>
 			
