@@ -95,7 +95,36 @@
 			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"
 			onsubmit="return validateForm()"
 			name="TeamAddToLeague">
-				<p>Team: <input type = "text" maxlength = "50" name = "teamToAdd"/></p>
+			<p>Team: 
+				<select name = "teamToAdd">
+	<?php	//populate all teams not in a leage from table team
+			
+			$resultTeamNotInLeague = $mysqli->query("
+				select TeamID, TeamName from team t
+				left join jtLeagueTeam jt
+				on t.TeamID = jt.fkTeamID
+				where jt.fkTeamID is NULL
+				");//pull all teams not in the team/league join table
+			
+			if (!$resultTeamNotInLeague)
+				{
+					printf("Query failed: %s\n", $mysqli->error);
+					exit;
+				}
+			
+			while(
+					list ($TeamID, $TeamName)
+					= $resultTeamNotInLeague->fetch_row()
+					)
+					{
+						echo '<option value = "' . $TeamID . '">' . $TeamName . '</option>';
+					}
+					
+	?><!--Populating the team names in the select dropdown box-->
+				</select>
+			</p>
+				<p>Team: <input type = "text" maxlength = "50" name = "teamToAdd1"/></p>
+				
 				<p>League: <input type = "text" maxlength = "50" name = "leagueToAddTo"/></p>
 			<input type="submit" name="teamAddToLeague"/>
 		</form>
