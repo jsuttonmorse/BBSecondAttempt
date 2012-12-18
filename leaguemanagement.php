@@ -76,7 +76,7 @@
 	<?php
 		$mysqli = new mysqli("localhost", "root", "root", "BloodBowl02");
 		$resultLeagues = $mysqli->query("
-				SELECT l.LeagueName, l.leagueOwner, l.MaxTeams
+				SELECT l.LeagueID, l.LeagueName, l.leagueOwner, l.MaxTeams
 				, (SELECT count(fkLeagueID) 
 					FROM jtLeagueTeam WHERE 
 					jtLeagueTeam.fkLeagueID = l.LeagueID) AS CurrentTeams
@@ -123,9 +123,39 @@
 	?><!--Populating the team names in the select dropdown box-->
 				</select>
 			</p>
-				<p>Team: <input type = "text" maxlength = "50" name = "teamToAdd1"/></p>
-				
-				<p>League: <input type = "text" maxlength = "50" name = "leagueToAddTo"/></p>
+	<!--Put in a list of the leagues that still have teams available-->
+			<p>League: 
+				<select name = "leagueToAddTo">
+	<?php //populate the leagues based on the list already loaded
+				$resultLeagues2 = $mysqli->query("
+				SELECT l.LeagueID, l.LeagueName, l.leagueOwner, l.MaxTeams
+				, (SELECT count(fkLeagueID) 
+					FROM jtLeagueTeam WHERE 
+					jtLeagueTeam.fkLeagueID = l.LeagueID) AS CurrentTeams
+				FROM league l
+				");
+			if (!$resultLeagues2)
+			{
+				printf("Query failed: %s\n", $mysqli->error);
+  				exit;
+			} 
+				while(list($leagueID
+							, $leagueName
+							, $leagueOwner
+							, $maxTeams
+							, $currentTeams
+							)
+						= $resultLeagues2 -> fetch_row()
+						)
+						{
+							if ($maxTeams > $currentTeams)
+							{
+								echo '<option value = "' . $leagueID . '">' . $leagueName . '</option>'; 
+							}
+						}
+	
+	?>
+			
 			<input type="submit" name="teamAddToLeague"/>
 		</form>
 	</div><!--Adding a team to a league-->
@@ -133,7 +163,8 @@
 	
 	<!--Here's where I start outputting leagues-->
 	<?php
-			while (list($leagueName,
+			while (list($leagueID,
+						$leagueName,
 						$leagueOwner, 
 						$maxTeams,
 						$currentTeams
