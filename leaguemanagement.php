@@ -18,6 +18,7 @@
 	Under Construction.
 	<div id="newLeague">
 		<?php /*Check if data has been submitted to add a new league & add if if necessary*/
+			$mysqli=new mysqli("localhost", "root", "root", "BloodBowl02");
 			printf("Hello, if clause");
 			if (isset ($_POST['leagueName'])) /*data submitted via form, so add the league*/
 			{
@@ -25,7 +26,7 @@
 				$leagueName=($_POST['leagueName']);
 				$leagueOwner=($_POST['leagueOwner']);
 				$maxTeams=($_POST['maxTeams']);
-				$mysqli=new mysqli("localhost", "root", "root", "BloodBowl02");
+				
 				$result = $mysqli->query("
 									call sp_leagueAdd('" .
 									$leagueName . "'" .
@@ -41,7 +42,7 @@
 				else
 				{
 					$result1 = $mysqli->query("select @message, @leagueID");
-					if (!result1)
+					if (!$result1)
 					{
 						printf("Query failed: %s\n", $mysqli->error);
 						exit;
@@ -60,6 +61,51 @@
 			
 		
 		?><!--php to add a new league if there's data from the form-->
+		
+		<?php /*Check if there was data submitted to link a team to a league & create the link*/
+			if(isset($_POST['teamToAdd'])) /*data submitted via form, so link the team and the league*/
+			{
+				//testing only
+				//printf("linking team and league");
+				$leagueID = $_POST['leagueToAddTo'];
+				$teamID = $_POST['teamToAdd'];
+				//printf("'nother test");
+				/*printf($leagueID . ", " . $teamID . " call sp_leagueTeamLink( "
+										. $leagueID .
+										", "
+										. $teamID .
+										", @message)
+										");*/
+				$result3 = $mysqli->query("
+										call sp_leagueTeamLink( "
+										. $leagueID .
+										", "
+										. $teamID .
+										", @message)
+										");
+				printf("test 4");
+				if (!$result3)
+				{
+					printf("Query failed: %s\n", $mysqli->error);
+					exit;
+				}
+				else
+				{
+					$result4 = $mysqli->query("select @message");
+					if (!$result4)
+					{
+						printf("Query failed: %s\n", $mysqli->error);
+						exit;
+					}
+					else
+					{
+						printf("Message: " . $row[0]);
+					}
+				}
+			
+			}/*data was submitted, so the league & team were linked*/
+		?><!--php to link a team to a league if there's data from the form-->
+		
 		<p>Create New League</p>	
 		<form 
 			method = "post" 
