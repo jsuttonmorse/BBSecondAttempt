@@ -83,7 +83,7 @@
 										. $teamID .
 										", @message)
 										");
-				printf("test 4");
+				//printf("test 4");
 				if (!$result3)
 				{
 					printf("Query failed: %s\n", $mysqli->error);
@@ -172,7 +172,7 @@
 	<!--Put in a list of the leagues that still have teams available-->
 			<p>League: 
 				<select name = "leagueToAddTo">
-	<?php //populate the leagues based on the list already loaded
+	<?php //populate the leagues based on a new query to pull leagues in
 				$resultLeagues2 = $mysqli->query("
 				SELECT l.LeagueID, l.LeagueName, l.leagueOwner, l.MaxTeams
 				, (SELECT count(fkLeagueID) 
@@ -200,7 +200,7 @@
 							}
 						}
 	
-	?>
+	?><!--Populated the leagues based on a new query of leagues-->
 			
 			<input type="submit" name="teamAddToLeague"/>
 		</form>
