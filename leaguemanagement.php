@@ -19,7 +19,7 @@
 	<div id="newLeague">
 		<?php /*Check if data has been submitted to add a new league & add if if necessary*/
 			$mysqli=new mysqli("localhost", "root", "root", "BloodBowl02");
-			printf("Hello, if clause");
+			
 			if (isset ($_POST['leagueName'])) /*data submitted via form, so add the league*/
 			{
 				printf("Hi There!");
