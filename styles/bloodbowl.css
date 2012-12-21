@@ -11,5 +11,28 @@
 		width: 100%;
 	}
 	
-	
+	table
+		{
+			border-collapse:collapse;
+			width:100%;
+		}
+		/*Team Roster - Roster Table stuff*/
+		.roster table
+		{
+			border:2px solid green;
+		}
+		.roster th
+		{
+			background-color:green;
+			color:white;
+		}
+		.roster tr
+		{
+			background-color:white;
+			color:green;
+		}
+		.roster td
+		{
+			border:1px dotted green;
+		}
 	
