@@ -14,18 +14,77 @@
 <body>
 
 	Under Construction.
+	<?php //check if there's any team info submitted
+		$mysqli = new mysqli("localhost", "root", "root", "BloodBowl02");
+		//*
+		IF(ISSET($_POST[teamName]))
+		{
+			$query = "call sp_teamAdd('" .
+								$_POST[teamName] .
+								"', '" .
+								$_POST[coachName] .
+								"', '" .
+								$_POST[teamRace] .
+								"', '', ''" . //logo file paths
+								", @response, @teamID);";
+//			printf($query); //debugging
+			$result = $mysqli->query($query);
+			if (!$result)
+			{
+				printf("Query failed: %s\n", $mysqli->error);
+  				exit;
+			}
+			$result1 = $mysqli->query("select @message, @teamID;");
+			$row = $result1->fetch_row();
+			if (!$result1)
+			{
+					printf("1Query failed: %s\n", $mysqli->error);
+  					exit;
+			}
+//			echo("Message: " . $row[0] . " ID: " . $row[1]); //debugging only
+		//*
+//			echo("Post: " . $_POST[league]);
+			IF($_POST[league]!="X")//League was set so add the team to the league
+			{
+				$resultLeague = $mysqli->query("call sp_LeagueTeamLink(" .
+										$_POST[league] .
+										", " .
+										$row[1] .
+										", @response);"
+										);
+				if (!$resultLeague)
+				{
+					printf("2Query failed: %s\n", $mysqli->error);
+  					exit;
+				}
+				$result1 = $mysqli->query("select @response;");
+				$row = $result1->fetch_row();
+				if (!$result1)
+				{
+						printf("3Query failed: %s\n", $mysqli->error);
+  						exit;
+				}
+//				echo("Message: " . $row[0]);//debugging only
+				
+			}//League and team also joined
+		//*/
+		
+		}//Team name was submitted, so need to add the team
+		//*/
 	
+	?><!--Checking if team info was submitted & updating if so-->
 	<!--Header info-->
+	
 	<form
 			method = "post" 
 			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"	
 			name = "TeamAddForm">
-		<p>Team Name: <input type="text" maxlength="50" name="leagueName"/></p>
+		<p>Team Name: <input type="text" maxlength="50" name="teamName"/></p>
 		<p>Race: <!--Dropdown-->
-			<select name = "race">
+			<select name = "teamRace">
 			<?php
 				//populating the race ID fields from table race
-				$mysqli = new mysqli("localhost", "root", "root", "BloodBowl02");
+
 				$result = $mysqli->query("
 				SELECT RaceID, RaceName 
 				FROM race
@@ -49,7 +108,7 @@
 		<p>Coach: <input type="text" maxlength="50" name="coachName"/></p>
 		<p>League (optional): 
 			<select name = "league">
-				<option value="">Unaffiliated</option>
+				<option value="X">Unaffiliated</option>
 			<?php
 				//populating the league fields from all leagues with space still available
 				$result=$mysqli->query("
