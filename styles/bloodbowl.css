@@ -35,4 +35,19 @@
 		{
 			border:1px dotted green;
 		}
+		
+/*form input/display*/
+	form
+	{
+		background-color:red;
 	
+	}
+	input
+	{
+		
+	}
+	
+	.enteredData
+		{
+			display:"";
+		}

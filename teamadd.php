@@ -74,12 +74,16 @@
 	
 	?><!--Checking if team info was submitted & updating if so-->
 	<!--Header info-->
-	
+
 	<form
 			method = "post" 
 			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"	
 			name = "TeamAddForm">
-		<p>Team Name: <input type="text" maxlength="50" name="teamName"/></p>
+		<p>Team Name: <input type="text" maxlength="50" name="teamName"/> 
+			<span class="enteredData">
+				<?php echo $_POST[teamName];?>
+			</span>
+		</p>
 		<p>Race: <!--Dropdown-->
 			<select name = "teamRace">
 			<?php
@@ -102,10 +106,37 @@
 				}
 			?>
 			</select>
+			<span class="enteredData">
+			<?php //need to get the race from the race ID
+				$result = $mysqli->query("
+											select raceName from race where raceID =" .
+											$_POST[teamRace] . ";
+										");
+					if (!$result)
+					{
+						printf("Query failed: %s\n", $mysqli->error);
+  						exit;
+					}
+				$row = $result -> fetch_row();
+				echo $row[0];
+				?>
+			</span>
 		</p>
-		<p>Rating: </p> 
-		<p>Treasury: </p>
-		<p>Coach: <input type="text" maxlength="50" name="coachName"/></p>
+		<p>Rating: 
+			<span class="derivedData">
+			100 - Update Later
+			</span>
+		</p> 
+		<p>Treasury: 
+			<span class="derivedData">
+			1,000,000 - Update Later
+			</span>
+		</p>
+		<p>Coach: <input type="text" maxlength="50" name="coachName"/>
+			<span class="enteredData">
+				<?php echo $_POST[coachName]; ?>
+			</span>
+		</p>
 		<p>League (optional): 
 			<select name = "league">
 				<option value="X">Unaffiliated</option>
@@ -139,9 +170,25 @@
 							}
 			?>
 			</select>
+			<span class="enteredData">
+				<?php
+				$result = $mysqli->query("
+											select leagueName from league where leagueID =" .
+											$_POST[league] . ";
+										");
+					if (!$result)
+					{
+						printf("Query failed: %s\n", $mysqli->error);
+  						exit;
+					}
+				$row = $result -> fetch_row();
+				echo $row[0];
+				?>
+			</span>
 		</p><!--League-->
 		<input type = "submit" name = "teamAdd"/>
 	</form><!--Team Info Header-->
+
 	<!--Roster-->
 	<div class="roster">
 	<table>
