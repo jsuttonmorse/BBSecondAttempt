@@ -48,6 +48,11 @@
 	}
 	
 	.enteredData
-		{
-			display:"";
-		}
+	{
+		display:none;
+	}
+		
+	.derivedData
+	{
+		display:none;
+	}

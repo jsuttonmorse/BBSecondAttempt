@@ -8,6 +8,29 @@
 	<link rel="stylesheet" type="text/css" href="styles/bloodbowl.css" />
 	
 	<!--Javascript-->
+	<script type="text/javascript">
+		function flipFormToRead()
+		{
+			alert("Doing flipFormToRead function");
+			var elem = document.TeamAddForm.elements;
+			for (i=0; i<elem.length; i++)
+			{
+				if (elem[i].className=="enteredData")
+				{
+					elem[i].style.display="block";
+					
+				}
+				else if (elem[i].className=="derivedData")
+				{
+					elem[i].style.display="";
+				}
+				else
+				{
+					elem[i].style.display="none";
+				}
+			}
+		}
+	</script>
 
 </head>
 
@@ -16,69 +39,15 @@
 	Under Construction.
 	<?php //check if there's any team info submitted
 		$mysqli = new mysqli("localhost", "root", "root", "BloodBowl02");
-		//*
-		IF(ISSET($_POST[teamName]))
-		{
-			$query = "call sp_teamAdd('" .
-								$_POST[teamName] .
-								"', '" .
-								$_POST[coachName] .
-								"', '" .
-								$_POST[teamRace] .
-								"', '', ''" . //logo file paths
-								", @response, @teamID);";
-//			printf($query); //debugging
-			$result = $mysqli->query($query);
-			if (!$result)
-			{
-				printf("Query failed: %s\n", $mysqli->error);
-  				exit;
-			}
-			$result1 = $mysqli->query("select @message, @teamID;");
-			$row = $result1->fetch_row();
-			if (!$result1)
-			{
-					printf("1Query failed: %s\n", $mysqli->error);
-  					exit;
-			}
-//			echo("Message: " . $row[0] . " ID: " . $row[1]); //debugging only
-		//*
-//			echo("Post: " . $_POST[league]);
-			IF($_POST[league]!="X")//League was set so add the team to the league
-			{
-				$resultLeague = $mysqli->query("call sp_LeagueTeamLink(" .
-										$_POST[league] .
-										", " .
-										$row[1] .
-										", @response);"
-										);
-				if (!$resultLeague)
-				{
-					printf("2Query failed: %s\n", $mysqli->error);
-  					exit;
-				}
-				$result1 = $mysqli->query("select @response;");
-				$row = $result1->fetch_row();
-				if (!$result1)
-				{
-						printf("3Query failed: %s\n", $mysqli->error);
-  						exit;
-				}
-//				echo("Message: " . $row[0]);//debugging only
-				
-			}//League and team also joined
-		//*/
-		
-		}//Team name was submitted, so need to add the team
-		//*/
+	?>
 	
-	?><!--Checking if team info was submitted & updating if so-->
 	<!--Header info-->
 
 	<form
 			method = "post" 
 			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"	
-			name = "TeamAddForm">
+			name = "TeamAddForm"
+	>
 		<p>Team Name: <input type="text" maxlength="50" name="teamName"/> 
 			<span class="enteredData">
 				<?php echo $_POST[teamName];?>
@@ -108,18 +77,21 @@
 			</select>
 			<span class="enteredData">
 			<?php //need to get the race from the race ID
-				$result = $mysqli->query("
-											select raceName from race where raceID =" .
-											$_POST[teamRace] . ";
-										");
-					if (!$result)
-					{
-						printf("Query failed: %s\n", $mysqli->error);
-  						exit;
-					}
-				$row = $result -> fetch_row();
-				echo $row[0];
-				?>
+				if(ISSET($_POST[teamRace]))
+				{
+					$result = $mysqli->query("
+												select raceName from race where raceID =" .
+												$_POST[teamRace] . ";
+											");
+						if (!$result)
+						{
+							printf("Query failed: %s\n", $mysqli->error);
+  							exit;
+						}
+					$row = $result -> fetch_row();
+					echo $row[0];
+				}
+			?>
 			</span>
 		</p>
 		<p>Rating: 
@@ -172,7 +144,9 @@
 			</select>
 			<span class="enteredData">
 				<?php
-				$result = $mysqli->query("
+				if(ISSET($_POST[league]) and $_POST[league]!="X")
+				{
+					$result = $mysqli->query("
 											select leagueName from league where leagueID =" .
 											$_POST[league] . ";
 										");
@@ -181,12 +155,13 @@
 						printf("Query failed: %s\n", $mysqli->error);
   						exit;
 					}
-				$row = $result -> fetch_row();
-				echo $row[0];
+					$row = $result -> fetch_row();
+					echo $row[0];
+				}
 				?>
 			</span>
 		</p><!--League-->
-		<input type = "submit" name = "teamAdd"/>
+		<input type = "submit" name = "teamAdd" onClick = "flipFormToRead()"/>
 	</form><!--Team Info Header-->
 
 	<!--Roster-->
@@ -251,6 +226,68 @@
 	Apothecary:
 	Wizard:
 	Total Cost of Team:
+	
+	<?php
+		echo "<script>alert('test');</script>";
+		//*
+		IF(ISSET($_POST[teamName]))
+		{
+			$query = "call sp_teamAdd('" .
+								$_POST[teamName] .
+								"', '" .
+								$_POST[coachName] .
+								"', '" .
+								$_POST[teamRace] .
+								"', '', ''" . //logo file paths
+								", @response, @teamID);";
+//			printf($query); //debugging
+			$result = $mysqli->query($query);
+			if (!$result)
+			{
+				printf("Query failed: %s\n", $mysqli->error);
+  				exit;
+			}
+			$result1 = $mysqli->query("select @message, @teamID;");
+			$row = $result1->fetch_row();
+			if (!$result1)
+			{
+					printf("1Query failed: %s\n", $mysqli->error);
+  					exit;
+			}
+//			echo("Message: " . $row[0] . " ID: " . $row[1]); //debugging only
+		//*
+//			echo("Post: " . $_POST[league]);
+			IF($_POST[league]!="X")//League was set so add the team to the league
+			{
+				$resultLeague = $mysqli->query("call sp_LeagueTeamLink(" .
+										$_POST[league] .
+										", " .
+										$row[1] .
+										", @response);"
+										);
+				if (!$resultLeague)
+				{
+					printf("2Query failed: %s\n", $mysqli->error);
+  					exit;
+				}
+				$result1 = $mysqli->query("select @response;");
+				$row = $result1->fetch_row();
+				if (!$result1)
+				{
+						printf("3Query failed: %s\n", $mysqli->error);
+  						exit;
+				}
+//				echo("Message: " . $row[0]);//debugging only
+				
+			}//League and team also joined
+		//*/
+		echo "<script>alert('test2');</script>";
+		echo '<script>flipFormToRead()</script>';
+		echo '<script>alert("hi");</script>';
+		}//Team name was submitted, so need to add the team
+		//*/
+	
+	?><!--Checking if team info was submitted & updating if so-->
 
 </body>
 
