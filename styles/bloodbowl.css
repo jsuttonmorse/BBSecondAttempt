@@ -49,10 +49,10 @@
 	
 	.enteredData
 	{
-		display:none;
+		display:"";
 	}
 		
 	.derivedData
 	{
-		display:none;
+		display:"";
 	}
