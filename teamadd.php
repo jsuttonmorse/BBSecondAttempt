@@ -34,12 +34,11 @@
 		
 		function fillRoster(iRosterID, sTitle, iMA, iST, iAG, iAV, iCost, iRosterLimit)
 		{
-			alert("fillRoster");
-			//var rosterSlots = rosterSlots || [];
+//			alert("fillRoster");
 			var tempRoster=[iRosterID, sTitle, iMA, iST, iAG, iAV, iCost, iRosterLimit];
 			rosterSlots.push(tempRoster);
 			//testing alerts
-			alert("rosterSlots length: " + rosterSlots.length);
+//			alert("rosterSlots length: " + rosterSlots.length);
 			
 		}
 	</script>
@@ -267,7 +266,7 @@
 			{
 				//call javascript to populate a roster
 				///*
-				echo "<script>alert('about to call fillRoster');</script>";
+//				echo "<script>alert('about to call fillRoster');</script>";
 				$scriptString= "fillRoster(" . $RosterID . 
 										", '" . $title .
 										"', " . $MA .
