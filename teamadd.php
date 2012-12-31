@@ -9,9 +9,10 @@
 	
 	<!--Javascript-->
 	<script type="text/javascript">
+		var rosterSlots=[];
 		function flipFormToRead()
 		{
-			//alert("Doing flipFormToRead function");
+//			alert("Doing flipFormToRead function");
 			var elem = document.TeamAddForm.elements;
 			for (i=0; i<elem.length; i++)
 			{
@@ -30,6 +31,17 @@
 				}
 			}
 		}
+		
+		function fillRoster(iRosterID, sTitle, iMA, iST, iAG, iAV, iCost, iRosterLimit)
+		{
+			alert("fillRoster");
+			//var rosterSlots = rosterSlots || [];
+			var tempRoster=[iRosterID, sTitle, iMA, iST, iAG, iAV, iCost, iRosterLimit];
+			rosterSlots.push(tempRoster);
+			//testing alerts
+			alert("rosterSlots length: " + rosterSlots.length);
+			
+		}
 	</script>
 
 </head>
@@ -39,7 +51,7 @@
 	Under Construction.
 	<?php //check if there's any team info submitted
 		$mysqli = new mysqli("localhost", "root", "root", "BloodBowl02");
-	?>
+	?><!--connect via myslqi-->
 	
 	<!--Header info-->
 
@@ -52,7 +64,7 @@
 			<span class="enteredData">
 				<?php echo $_POST[teamName];?>
 			</span>
-		</p>
+		</p><!--Team Name-->
 		<p>Race: <!--Dropdown-->
 			<select name = "teamRace">
 			<?php
@@ -93,22 +105,22 @@
 				}
 			?>
 			</span>
-		</p>
+		</p><!--Race-->
 		<p>Rating: 
 			<span class="derivedData">
 			100 - Update Later
 			</span>
-		</p> 
+		</p><!--Rating-->
 		<p>Treasury: 
 			<span class="derivedData">
 			1,000,000 - Update Later
 			</span>
-		</p>
+		</p><!--Treasury-->
 		<p>Coach: <input type="text" maxlength="50" name="coachName"/>
 			<span class="enteredData">
 				<?php echo $_POST[coachName]; ?>
 			</span>
-		</p>
+		</p><!--Coach-->
 		<p>League (optional): 
 			<select name = "league">
 				<option value="X">Unaffiliated</option>
@@ -228,6 +240,50 @@
 
 
 	<!--Roster-->
+	<?php //load up the roster for the selected team so that JS can use it
+	///*
+//	echo "<script>alert('teamName is done');</script>";
+	IF(ISSET($_POST[teamName]))
+	{
+		echo "<script>alert('teamName is: " . $_POST[teamName] . "');</script>";
+	///*
+		//Load up the roster information based on the team race
+		$query = "SELECT BaseRosterID, Title, MA, ST, AG, AV, Cost, RosterLimit
+					FROM baseRoster WHERE fkRaceID = " . $_POST[teamRace];
+		$resultRoster = $mysqli->query($query);
+	///*
+		if (!resultRoster)
+		{
+			printf("4Query failed: %s\n", $mysqli->error);
+			exit;
+		}
+	///*
+		while(
+			list(
+				$RosterID, $title, $MA, $ST, $AG, $AV, $Cost, $RosterLimit
+				)
+				=$resultRoster -> fetch_row()
+			)
+			{
+				//call javascript to populate a roster
+				///*
+				echo "<script>alert('about to call fillRoster');</script>";
+				$scriptString= "fillRoster(" . $RosterID . 
+										", '" . $title .
+										"', " . $MA .
+										", " . $ST .
+										", " . $AG .
+										", " . $AV .
+										", " . $Cost .
+										", " . $RosterLimit .
+										");";
+				echo "<script> " .$scriptString . "</script>";
+	//*/									
+			}
+	//*/	
+	}//End if team name exists
+	//*/
+	?><!--Load up the roster for this particular team so that JS can use it -->
 	<div class="roster">
 	<table>
 		<tr><!--Header Row -->
