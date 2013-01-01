@@ -10,10 +10,11 @@
 	<!--Javascript-->
 	<script type="text/javascript">
 		var rosterSlots=[];
-		function flipFormToRead()
+		function flipFormToRead(form)
 		{
-//			alert("Doing flipFormToRead function");
-			var elem = document.TeamAddForm.elements;
+			alert("Doing flipFormToRead function" + form);
+			//var elem = document.TeamAddForm.elements;
+			var elem = form.elements;
 			for (i=0; i<elem.length; i++)
 			{
 				if (elem[i].className=="enteredData")
@@ -172,7 +173,7 @@
 				?>
 			</span>
 		</p><!--League-->
-		<input type = "submit" name = "teamAdd" onClick = "flipFormToRead()"/>
+		<input type = "submit" name = "teamAdd" onClick = ""/>
 	</form><!--Team Info Header-->
 	
 		<?php //Script to flip things around if the team name was already set
@@ -230,7 +231,7 @@
 			}//League and team also joined
 		//*/
 //		echo "<script>alert('test2');</script>";
-		echo '<script>flipFormToRead()</script>';
+		echo '<script>flipFormToRead(document.TeamAddForm)</script>';
 //		echo '<script>alert("hi");</script>';
 		}//Team name was submitted, so need to add the team
 		//*/
@@ -305,6 +306,34 @@
 				<th class="necessary">Add</th>
 			</tr><!--Header row-->
 		<!--Loop through 16 times to set up the roster-->
+		<!--Just testing - a single row without using the PHP loop (Roster slot 0) to test the form input stuff-->
+		<tr><!--Row 0-->
+		<form method = "post"
+				action=""
+				name="Player0AddForm"
+		>
+				<td class="necessary">0</td>
+				<td class="necessary"></td><!--Name-->
+				<td class="necessary"></td><!--Position-->
+				<td class="desired"></td><!--MA-->
+				<td class="desired"></td><!--ST-->
+				<td class="desired"></td><!--AG-->
+				<td class="desired"></td><!--AV-->
+				<td class="necessary"></td><!--Player Skills-->
+				<td class="unimportant"></td><!--Inj-->
+				<td class="unimportant"></td><!--Comp-->
+				<td class="unimportant"></td><!--TD-->
+				<td class="unimportant"></td><!--Int-->
+				<td class="unimportant"></td><!--Cas-->
+				<td class="unimportant"></td><!--MVP-->
+				<td class="desired"></td><!--SPP-->
+				<td class="unimportant"></td><!--Cost-->
+				<td class="necessary">
+					<input type = "submit" name="Player0Add" onClick="flipFormToRead(this.form)"/>
+				</td><!--Add player button-->
+		</form>
+		</tr><!--Player 0-->	
+		<!--End testing the Row 0 in order to make form input stuff when adding the roster work-->
 		<?php //Loop to create the table
 		for ($i=1; $i<=16; $i++)
 		{
