@@ -258,11 +258,12 @@
 			exit;
 		}
 	///*
+		$resultRosterUse=$resultRoster;
 		while(
 			list(
 				$RosterID, $title, $MA, $ST, $AG, $AV, $Cost, $RosterLimit
 				)
-				=$resultRoster -> fetch_row()
+				=$resultRosterUse -> fetch_row()
 			)
 			{
 				//call javascript to populate a roster
@@ -313,8 +314,28 @@
 				name="Player0AddForm"
 		>
 				<td class="necessary">0</td>
-				<td class="necessary"></td><!--Name-->
-				<td class="necessary"></td><!--Position-->
+				<td class="necessary"><input type="text" maxlength="50" name="player0Name"/>
+					<span class="enteredData">
+					</span
+				</td><!--Name-->
+				<td class="necessary">
+					<select name="player0Position">
+					<?php
+						if ($resultRoster) //If the team has been selected then I populated a roster slot list earlier
+						{
+							$resultRosterUse=$resultRoster;
+							while(
+									list(
+											$RosterID, $title, $MA, $ST, $AG, $AV, $Cost, $RosterLimit
+										)
+										=$resultRosterUse -> fetch_row()
+									)
+							{
+								echo '<option value = "' . $RosterID . '">' . $title . '</option>';
+							}//end the While cycling through roster slots	
+						}
+					?>
+				</td><!--Position-->
 				<td class="desired"></td><!--MA-->
 				<td class="desired"></td><!--ST-->
 				<td class="desired"></td><!--AG-->
