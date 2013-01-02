@@ -12,7 +12,7 @@
 		var rosterSlots=[];
 		function flipFormToRead(form)
 		{
-			alert("Doing flipFormToRead function" + form);
+//			alert("Doing flipFormToRead function" + form);
 			//var elem = document.TeamAddForm.elements;
 			var elem = form.elements;
 			for (i=0; i<elem.length; i++)
@@ -245,7 +245,7 @@
 //	echo "<script>alert('teamName is done');</script>";
 	IF(ISSET($_POST[teamName]))
 	{
-		echo "<script>alert('teamName is: " . $_POST[teamName] . "');</script>";
+//		echo "<script>alert('teamName is: " . $_POST[teamName] . "');</script>";
 	///*
 		//Load up the roster information based on the team race
 		$query = "SELECT BaseRosterID, Title, MA, ST, AG, AV, Cost, RosterLimit
@@ -259,6 +259,7 @@
 		}
 	///*
 		$resultRosterUse=$resultRoster;
+//		echo '<script>alert("'.$resultRoster->num_rows.'");</script>';
 		while(
 			list(
 				$RosterID, $title, $MA, $ST, $AG, $AV, $Cost, $RosterLimit
@@ -306,7 +307,7 @@
 				<th class="unimportant">Cost</th>
 				<th class="necessary">Add</th>
 			</tr><!--Header row-->
-		<!--Loop through 16 times to set up the roster-->
+		
 		<!--Just testing - a single row without using the PHP loop (Roster slot 0) to test the form input stuff-->
 		<tr><!--Row 0-->
 		<form method = "post"
@@ -321,9 +322,13 @@
 				<td class="necessary">
 					<select name="player0Position">
 					<?php
+//						echo '<script>alert("ResultRoster test");</script>';
 						if ($resultRoster) //If the team has been selected then I populated a roster slot list earlier
 						{
+//							echo '<script>alert("'.$resultRoster->num_rows.', '.$resultRoster->field_count.'");</script>';
+							echo'<option value = "0">None</option>';	
 							$resultRosterUse=$resultRoster;
+							$resultRosterUse->data_seek(0);
 							while(
 									list(
 											$RosterID, $title, $MA, $ST, $AG, $AV, $Cost, $RosterLimit
@@ -331,6 +336,7 @@
 										=$resultRosterUse -> fetch_row()
 									)
 							{
+//								echo '<script>alert("New Option!");</script>';
 								echo '<option value = "' . $RosterID . '">' . $title . '</option>';
 							}//end the While cycling through roster slots	
 						}
@@ -355,6 +361,7 @@
 		</form>
 		</tr><!--Player 0-->	
 		<!--End testing the Row 0 in order to make form input stuff when adding the roster work-->
+		<!--Loop through 16 times to set up the roster-->
 		<?php //Loop to create the table
 		for ($i=1; $i<=16; $i++)
 		{
