@@ -10,6 +10,7 @@
 	<!--Javascript-->
 	<script type="text/javascript">
 		var rosterSlots=[];
+		var rosterSkills=[];
 		function flipFormToRead(form)
 		{
 //			alert("Doing flipFormToRead function" + form);
@@ -41,6 +42,27 @@
 			//testing alerts
 //			alert("rosterSlots length: " + rosterSlots.length);
 			
+		}
+		
+		function fillRosterSkills(iRosterID, iSkillID, sSkillDescription)
+		{
+//			alert("fillRosterSkills " + sSkillDescription + ", " + iRosterID);
+			var tempSkillRoster=[];
+			var skillAdded='FALSE';
+			//only add this if the RosterID is in our RosterSlots
+			for (var i=0; i<rosterSlots.length; i++)
+			{
+				if (iRosterID==rosterSlots[i][0])
+				{
+					tempSkillRoster=[iRosterID, iSkillID, sSkillDescription];
+					rosterSkills.push(tempSkillRoster);
+					skillAdded='TRUE';
+				}
+			}
+			if (skillAdded=='FALSE')	
+			{
+				alert("Error: Skill not added - Roster Slot not found.");
+			}
 		}
 		
 		function updateStats(rosterSlot)
@@ -111,6 +133,25 @@
 				if (rosterCycle[rosterCycleCounter].classList.contains("Cost"))
 				{
 					rosterCycle[rosterCycleCounter].innerHTML=iCost;
+				}
+				//update skills
+				if (rosterCycle[rosterCycleCounter].classList.contains("Skill"))
+				{
+					var concatenatedSkills ="";
+					for (var tempSkillCounter=0; tempSkillCounter<rosterSkills.length; tempSkillCounter++)
+					{
+						if (rosterSkills[tempSkillCounter][0]==ID)
+						{
+							//put in ", " where relevant
+							if (concatenatedSkills!="")
+							{
+								concatenatedSkills+=", ";
+							}
+							concatenatedSkills+=rosterSkills[tempSkillCounter][2];
+						}
+					}
+					//concatenate all skills from the array
+					rosterCycle[rosterCycleCounter].innerHTML=concatenatedSkills;
 				}
 
 			}
@@ -325,7 +366,7 @@
 					FROM baseRoster WHERE fkRaceID = " . $_POST[teamRace];
 		$resultRoster = $mysqli->query($query);
 	///*
-		if (!resultRoster)
+		if (!$resultRoster)
 		{
 			printf("4Query failed: %s\n", $mysqli->error);
 			exit;
@@ -355,6 +396,34 @@
 				echo "<script> " .$scriptString . "</script>";
 	//*/									
 			}
+		//Also need to load up the skills & dump them into an array for use
+		$query= "SELECT jt.fkBaseRosterID, jt.fkEnhancementID, e.EnhancementTitle
+					FROM jtPlayerEnhancement jt
+					INNER JOIN
+					enhancement e on jt.fkEnhancementID = e.EnhancementID
+					INNER JOIN
+					baseRoster br on jt.fkBaseRosterID = br.BaseRosterID
+					WHERE br.fkRaceID = " . $_POST[teamRace];
+		$resultRosterSkills = $mysqli->query($query);
+		if (!$resultRosterSkills)
+		{
+			printf("4.1Query failed: %s\n", $mysqli->error);
+			exit;
+		}
+		$resultRosterUse = $resultRosterSkills;
+		while (
+				list(
+					$rosterID, $skillID, $skillTitle
+					)
+					=$resultRosterUse -> fetch_row()
+				)
+				{
+					$scriptString = "fillRosterSkills(" . $rosterID .
+									", " . $skillID .
+									", '" . $skillTitle .
+									"');";
+					echo "<script> ".$scriptString . "</script>";
+				}
 	//*/	
 	}//End if team name exists
 	//*/
@@ -419,7 +488,7 @@
 				<td class="desired ST"></td><!--ST-->
 				<td class="desired AG"></td><!--AG-->
 				<td class="desired AV"></td><!--AV-->
-				<td class="necessary"></td><!--Player Skills-->
+				<td class="necessary Skill"></td><!--Player Skills-->
 				<td class="unimportant"></td><!--Inj-->
 				<td class="unimportant"></td><!--Comp-->
 				<td class="unimportant"></td><!--TD-->
