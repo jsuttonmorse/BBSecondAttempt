@@ -42,6 +42,79 @@
 //			alert("rosterSlots length: " + rosterSlots.length);
 			
 		}
+		
+		function updateStats(rosterSlot)
+		{
+			//get from "RosterSlot" to the Form
+			var form = rosterSlot.form;
+			var iMA=1;
+			var iST=1;
+			var iAG=1;
+			var iAV=1;
+			var iCost=1;
+			//get the ID of the slot
+			var ID = rosterSlot.value;
+			if(ID == 0)
+			{
+				iMA="";
+				iST="";
+				iAG="";
+				iAV="";
+				iCost="";
+			}
+			else
+			{
+			//get the values needed out of the rosterSlots array
+				for (var i = 0; i<rosterSlots.length; i++)
+				{
+//					alert("slot: " + rosterSlots[i][0] + ", ID: " + ID);
+//			/*
+					if (rosterSlots[i][0]==ID)
+					{
+						iMA=rosterSlots[i][2];
+						iST=rosterSlots[i][3];
+						iAG=rosterSlots[i][4];
+						iAV=rosterSlots[i][5];
+						iCost=rosterSlots[i][6];
+					}
+				//MA
+//			*/
+				}
+			}
+			alert("Roster Selection Changed! Form: " + form.name + ", ID: " + ID + ", MA: "+ iMA);
+	
+			
+			var rosterCycle=rosterSlot.parentNode.parentNode.getElementsByTagName('td');
+			for (var rosterCycleCounter=0; rosterCycleCounter<rosterCycle.length; rosterCycleCounter++)
+			{
+				//update MA
+				if (rosterCycle[rosterCycleCounter].classList.contains("MA"))
+				{
+					rosterCycle[rosterCycleCounter].innerHTML=iMA;
+				}
+				//update ST
+				if (rosterCycle[rosterCycleCounter].classList.contains("ST"))
+				{
+					rosterCycle[rosterCycleCounter].innerHTML=iST;
+				}
+				//update AG
+				if (rosterCycle[rosterCycleCounter].classList.contains("AG"))
+				{
+					rosterCycle[rosterCycleCounter].innerHTML=iAG;
+				}
+				//update AV
+				if (rosterCycle[rosterCycleCounter].classList.contains("AV"))
+				{
+					rosterCycle[rosterCycleCounter].innerHTML=iAV;
+				}
+				//update Cost
+				if (rosterCycle[rosterCycleCounter].classList.contains("Cost"))
+				{
+					rosterCycle[rosterCycleCounter].innerHTML=iCost;
+				}
+
+			}
+		}
 	</script>
 
 </head>
@@ -320,7 +393,7 @@
 					</span
 				</td><!--Name-->
 				<td class="necessary">
-					<select name="player0Position">
+					<select name="player0Position" onchange="updateStats(this)">
 					<?php
 //						echo '<script>alert("ResultRoster test");</script>';
 						if ($resultRoster) //If the team has been selected then I populated a roster slot list earlier
@@ -342,10 +415,10 @@
 						}
 					?>
 				</td><!--Position-->
-				<td class="desired"></td><!--MA-->
-				<td class="desired"></td><!--ST-->
-				<td class="desired"></td><!--AG-->
-				<td class="desired"></td><!--AV-->
+				<td class="desired MA"></td><!--MA-->
+				<td class="desired ST"></td><!--ST-->
+				<td class="desired AG"></td><!--AG-->
+				<td class="desired AV"></td><!--AV-->
 				<td class="necessary"></td><!--Player Skills-->
 				<td class="unimportant"></td><!--Inj-->
 				<td class="unimportant"></td><!--Comp-->
@@ -354,7 +427,7 @@
 				<td class="unimportant"></td><!--Cas-->
 				<td class="unimportant"></td><!--MVP-->
 				<td class="desired"></td><!--SPP-->
-				<td class="unimportant"></td><!--Cost-->
+				<td class="unimportant Cost"></td><!--Cost-->
 				<td class="necessary">
 					<input type = "submit" name="Player0Add" onClick="flipFormToRead(this.form)"/>
 				</td><!--Add player button-->
