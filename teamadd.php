@@ -67,6 +67,7 @@
 		
 		function updateStats(rosterSlot)
 		{
+			alert("updateStats");
 			//get from "RosterSlot" to the Form
 			var form = rosterSlot.form;
 			var iMA=1;
@@ -103,7 +104,7 @@
 //			*/
 				}
 			}
-			alert("Roster Selection Changed! Form: " + form.name + ", ID: " + ID + ", MA: "+ iMA);
+			alert("Roster Selection Changed! ID: " + ID + ", MA: "+ iMA);
 	
 			
 			var rosterCycle=rosterSlot.parentNode.parentNode.getElementsByTagName('td');
@@ -155,6 +156,84 @@
 				}
 
 			}
+		}
+		
+		function savePlayer(button)
+		{
+			alert("savePlayer!"/* + button.tagName*/);
+			
+			//for debug purposes see if I can count up to the TableRow
+			var el=button;
+			while (el.tagName!="TR")
+			{
+				el=el.parentNode;
+				el.style.backgroundColor="red";
+//				alert(el.tagName);				
+			}
+			var cells = el.getElementsByTagName('td')
+			for (var i=0; i<cells.count; i++)
+			{
+				cells[i].style.backgroundColor="blue";
+			}
+			
+			//try figuring out the xmlhttp request
+			var xmlhttp;
+			xmlhttp=new XMLHttpRequest();
+			xmlhttp.open("POST", "phpFunctions/playeradd.php", true);
+			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			var postVariables="";
+			//paPlayerName
+			var playerName="JonahTest";
+			//get the Player Name
+			cells=el.getElementsByTagName('td')
+			for (i=0; i<cells.count; i++)
+			{
+				if (cells[i].classList.contains("Name"))
+				{
+					playerName=cells[i].value;
+					alert("PlayerName= "+ playerName);
+				}
+			}
+			
+			postVariables+="paPlayerName="
+			postVariables+=playerName;
+			
+			//paBaseRosterID
+			var baseRosterID=1;
+			//get the BaseRosterID
+			cells=el.getElementsByTagName('td');
+			alert("cells.count = " + cells.count + ", el=" + el);
+			for (i=0; i<cells.count; i++)
+			{
+				if (cells[i].classList.contains("Position"))
+				{
+					baseRosterID = cells[i].value;
+					alert("Base Roster= " + baseRosterID);
+				}
+			}
+			
+			postVariables+="&paBaseRosterID="
+			postVariables+=baseRosterID;
+			
+			//paTeamID
+			var teamID=221;
+			//get the teamID
+			
+			
+			postVariables+="&paTeamID="
+			postVariables+=teamID;
+			alert(postVariables);//debug
+			xmlhttp.send(postVariables);
+			//end goal is to send a request to the server to add a player
+			xmlhttp.onreadystatechange=function()
+			  {
+  				if (xmlhttp.readyState==4)
+   					 {
+    					alert(xmlhttp.responseText);
+    				}
+  				}
+			//This is the query I'm sending for now - call sp_PlayerAdd ('PageTest-Jonah', 1, 92, 'N', @response);
+			
 		}
 	</script>
 
@@ -452,16 +531,18 @@
 		
 		<!--Just testing - a single row without using the PHP loop (Roster slot 0) to test the form input stuff-->
 		<tr><!--Row 0-->
+		<!--
 		<form method = "post"
 				action=""
 				name="Player0AddForm"
 		>
-				<td class="necessary">0</td>
-				<td class="necessary"><input type="text" maxlength="50" name="player0Name"/>
+		-->
+				<td class="necessary Number">0</td>
+				<td class="necessary Name"><input type="text" maxlength="50" name="player0Name"/>
 					<span class="enteredData">
 					</span
 				</td><!--Name-->
-				<td class="necessary">
+				<td class="necessary Position">
 					<select name="player0Position" onchange="updateStats(this)">
 					<?php
 //						echo '<script>alert("ResultRoster test");</script>';
@@ -489,18 +570,20 @@
 				<td class="desired AG"></td><!--AG-->
 				<td class="desired AV"></td><!--AV-->
 				<td class="necessary Skill"></td><!--Player Skills-->
-				<td class="unimportant"></td><!--Inj-->
-				<td class="unimportant"></td><!--Comp-->
-				<td class="unimportant"></td><!--TD-->
-				<td class="unimportant"></td><!--Int-->
-				<td class="unimportant"></td><!--Cas-->
-				<td class="unimportant"></td><!--MVP-->
-				<td class="desired"></td><!--SPP-->
+				<td class="unimportant Inj"></td><!--Inj-->
+				<td class="unimportant Comp"></td><!--Comp-->
+				<td class="unimportant TD"></td><!--TD-->
+				<td class="unimportant Int"></td><!--Int-->
+				<td class="unimportant Cas"></td><!--Cas-->
+				<td class="unimportant MVP"></td><!--MVP-->
+				<td class="desired SPP"></td><!--SPP-->
 				<td class="unimportant Cost"></td><!--Cost-->
-				<td class="necessary">
-					<input type = "submit" name="Player0Add" onClick="flipFormToRead(this.form)"/>
+				<td class="necessary Submit">
+					<input type = "submit" name="Player0Add" onClick="savePlayer(this)"/>
 				</td><!--Add player button-->
+		<!--
 		</form>
+		-->
 		</tr><!--Player 0-->	
 		<!--End testing the Row 0 in order to make form input stuff when adding the roster work-->
 		<!--Loop through 16 times to set up the roster-->
