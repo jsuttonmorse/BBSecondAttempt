@@ -11,26 +11,43 @@
 	<script type="text/javascript">
 		var rosterSlots=[];
 		var rosterSkills=[];
+		var teamID=0;
+		var leagueID = 0;
+		var raceID = 0;
+		var raceName=""
 		function flipFormToRead(form)
 		{
-//			alert("Doing flipFormToRead function" + form);
+			alert("Doing flipFormToRead function" + form);
 			//var elem = document.TeamAddForm.elements;
-			var elem = form.elements;
+			//var elem = form.elements;
+			var div = document.getElementById("teamform");
+			alert(div);
+			var elem=document.getElementById("teamform").childNodes;
+			alert(elem + ", " + elem.length);
 			for (i=0; i<elem.length; i++)
 			{
-				if (elem[i].className=="enteredData")
+				alert(elem[i] + ", " + elem[i].tagName + ", " + elem[i].className/*+ elem[i].classList.count*/);
+				///*
+				if (elem[i].classList)
 				{
-					elem[i].style.display="block";
-					
+					alert("elem[i].classList - " + elem[i].classList.count);
+					if (elem[i].classList.contains('enteredData'))
+					{
+						elem[i].style.display="block";
+						
+					}
+					else if (elem[i].classList.contains=="derivedData")
+					{
+						elem[i].style.display="";
+					}
+					/*
+					else
+					{
+						elem[i].style.display="none";
+					}
+					//*/
 				}
-				else if (elem[i].className=="derivedData")
-				{
-					elem[i].style.display="";
-				}
-				else
-				{
-					elem[i].style.display="none";
-				}
+				//*/
 			}
 		}
 		
@@ -235,6 +252,97 @@
 			//This is the query I'm sending for now - call sp_PlayerAdd ('PageTest-Jonah', 1, 92, 'N', @response);
 			
 		}
+		
+		function saveTeam(button)
+		{
+//			alert("SaveTeam!");
+			//Need to collect the needed data
+				//Team Name
+				var teamName=document.getElementById("teamName").value;
+				//TeamOwner
+				var teamOwner=document.getElementById("coachName").value;
+				//Race
+				var teamRace=document.getElementById("teamRace").value;
+				//League
+				var leagueID = document.getElementById("league").value;
+				alert("Name: " + teamName + ", Owner: " + teamOwner + ", Race: " + teamRace + ", League: " + leagueID);
+			//Need to call a team add php function
+			var xmlhttp;
+			xmlhttp=new XMLHttpRequest();
+			xmlhttp.open("POST", "phpFunctions/teamadd.php", true);
+			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			var postVariables="";
+				//team name
+				postVariables+="teamName=";
+				postVariables+=teamName;
+				//coach name
+				postVariables+="&coachName=";
+				postVariables+=teamOwner;
+				//team race
+				postVariables+="&teamRace=";
+				postVariables+=teamRace;
+				//league
+				postVariables+="&league=";
+				postVariables+=leagueID;
+						alert(postVariables);//debug
+			xmlhttp.send(postVariables);
+			//end goal is to send a request to the server to add a player
+			xmlhttp.onreadystatechange=function()
+			  {
+  				if (xmlhttp.readyState==4)
+   					 {
+//    					alert(xmlhttp.responseText);
+    					var returnedArray=JSON.parse(xmlhttp.responseText);
+//    					alert(returnedArray[0] + ", " + returnedArray[1] + ", " + returnedArray[2]);
+    					//Need to make sure the Team ID, Race, League, etc are all stored somewhere to be used elsewhere
+						raceID = teamRace;
+						teamID = returnedArray[1];
+						leagueID = leagueID;
+//						alert("raceID = " + raceID + ", TeamID = " + teamID + ", League ID = " + leagueID);
+    				}
+  				}
+			//Need to flip the styling to "saved" mode
+			//flipFormToRead(button);
+			var el=button;
+			while (el.tagName!="DIV")
+			{
+				el=el.parentNode;
+				alert(el.tagName);
+			}
+			flipReadOnly(el);
+			
+			
+		}
+		
+		function flipReadOnly(div)
+		{
+			//function to take a particular div and make all the inputs/etc. read-only rather than accepting input
+			//i.e. once the team has been added, display the team information without allowing edits
+//			alert("flipReadOnly! " + div + ", " + div.id)
+			var el = div.childNodes;
+//			alert (el + ", " + el.length);
+			for (var i = 0; i<el.length; i++)
+			{
+//				alert (el[i].tagName);
+				if (el[i].tagName='DIV' && el[i].classList)
+				{
+//					alert(el[i].tagName + ", " + el[i].className);
+					if (el[i].classList.contains('entered'))
+					{
+						el[i].style.display="inline"
+					}
+					else if (el[i].classList.contains('derived'))
+					{
+						el[i].style.display="inline"
+					}
+					else if (el[i].classList.contains('entry'))
+					{
+						el[i].style.display="none";
+					}
+				}
+			}
+			
+		}
 	</script>
 
 </head>
@@ -247,106 +355,147 @@
 	?><!--connect via myslqi-->
 	
 	<!--Header info-->
-
+	<!--Getting rid of the form so that instead I can just add this as an asynchronous call
 	<form
 			method = "post" 
 			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"	
 			name = "TeamAddForm"
 	>
-		<p>Team Name: <input type="text" maxlength="50" name="teamName"/> 
-			<span class="enteredData">
-				<?php echo $_POST[teamName];?>
-			</span>
+	-->
+	<div id="teamform">
+		<p>
+			<div class="data label">
+				Team Name: 
+			</div>
+			<div class="data entry">
+				<input type="text" maxlength="50" name="teamName" id="teamName"/> 
+			</div>
+			<div class="data entered">
+				<?php echo $_POST[teamName];?>ergh
+			</div>
 		</p><!--Team Name-->
-		<p>Race: <!--Dropdown-->
-			<select name = "teamRace">
-			<?php
-				//populating the race ID fields from table race
+		<p>
+			<div class="data label">
+				Race: <!--Dropdown-->
+			</div>
+			<div class="data entry">
+				<select name = "teamRace" id="teamRace" class="entry">
+				<?php
+					//populating the race ID fields from table race	
 
-				$result = $mysqli->query("
-				SELECT RaceID, RaceName 
-				FROM race
-				");
-				if (!$result)
-					{
-						printf("Query failed: %s\n", $mysqli->error);
-  						exit;
-					}
-				while (
-						list($RaceID, $RaceName) 
-						= $result->fetch_row())
-				{
-					echo '<option value = "' . $RaceID . '">' . $RaceName . '</option>';
-				}
-			?>
-			</select>
-			<span class="enteredData">
-			<?php //need to get the race from the race ID
-				if(ISSET($_POST[teamRace]))
-				{
 					$result = $mysqli->query("
-												select raceName from race where raceID =" .
-												$_POST[teamRace] . ";
-											");
-						if (!$result)
+					SELECT RaceID, RaceName 
+					FROM race
+					");
+					if (!$result)
 						{
 							printf("Query failed: %s\n", $mysqli->error);
   							exit;
 						}
-					$row = $result -> fetch_row();
-					echo $row[0];
-				}
-			?>
-			</span>
-		</p><!--Race-->
-		<p>Rating: 
-			<span class="derivedData">
-			100 - Update Later
-			</span>
-		</p><!--Rating-->
-		<p>Treasury: 
-			<span class="derivedData">
-			1,000,000 - Update Later
-			</span>
-		</p><!--Treasury-->
-		<p>Coach: <input type="text" maxlength="50" name="coachName"/>
+					while (
+							list($RaceID, $RaceName) 
+							= $result->fetch_row())
+					{
+						echo '<option value = "' . $RaceID . '">' . $RaceName . '</option>';
+					}
+				?>
+				</select>
+			</div>
+			<div class="data entered">
+				OrcTest
 			<span class="enteredData">
-				<?php echo $_POST[coachName]; ?>
-			</span>
-		</p><!--Coach-->
-		<p>League (optional): 
-			<select name = "league">
-				<option value="X">Unaffiliated</option>
-			<?php
-				//populating the league fields from all leagues with space still available
-				$result=$mysqli->query("
-									SELECT l.LeagueID, l.LeagueName, l.leagueOwner, l.MaxTeams
-									, (SELECT count(fkLeagueID) 
-									FROM jtLeagueTeam WHERE 
-									jtLeagueTeam.fkLeagueID = l.LeagueID) AS CurrentTeams
-									FROM league l
-									");
-				if (!$result)
-				{
-					printf("Query failed: %s\n", $mysqli->error);
-  					exit;
-				} 
-					while(list($leagueID
-								, $leagueName
-								, $leagueOwner
-								, $maxTeams
-								, $currentTeams
-								)
-							= $result -> fetch_row()
-							)
+				<?php //need to get the race from the race ID
+					if(ISSET($_POST[teamRace]))
+					{
+						$result = $mysqli->query("
+													select raceName from race where raceID =" .
+													$_POST[teamRace] . ";
+												");
+							if (!$result)
 							{
-								if ($maxTeams > $currentTeams)
-								{
-									echo '<option value = "' . $leagueID . '">' . $leagueName . '</option>'; 
-								}
+								printf("Query failed: %s\n", $mysqli->error);
+  								exit;
 							}
-			?>
-			</select>
+						$row = $result -> fetch_row();
+						echo $row[0];
+					}
+				?>
+			</span>
+			</div>
+		</p><!--Race-->
+		<p>
+			<div class="data label">
+				Rating: 
+			</div>
+			<div class="derived data">
+			<span class="derivedData">
+				100 - Update Later
+			</span>
+			</div>
+		</p><!--Rating-->
+		<p>
+			<div class="data label">
+				Treasury: 
+			</div>
+			<div class="derived data">
+			<span class="derivedData">
+				1,000,000 - Update Later
+			</span>
+			</div>
+		</p><!--Treasury-->
+		<p>
+			<div class="data label">
+				Coach:
+			</div>
+			<div class="data entry">
+				 <input type="text" maxlength="50" name="coachName" id="coachName" class="entry"/>
+			</div>
+			<div class="data entered">
+				CoachName 
+			<span class="enteredData">
+					<?php echo $_POST[coachName]; ?>
+			</span>
+			</div>
+		</p><!--Coach-->
+		<p>
+			<div class="data label">
+				League (optional): 
+			</div>
+			<div class="data entry">
+				<select name = "league" id="league" class="entry">
+					<option value="X">Unaffiliated</option>
+				<?php
+					//populating the league fields from all leagues with space still available
+					$result=$mysqli->query("
+										SELECT l.LeagueID, l.LeagueName, l.leagueOwner, l.MaxTeams
+										, (SELECT count(fkLeagueID) 
+										FROM jtLeagueTeam WHERE 
+										jtLeagueTeam.fkLeagueID = l.LeagueID) AS CurrentTeams
+										FROM league l
+										");
+					if (!$result)
+					{
+						printf("Query failed: %s\n", $mysqli->error);
+  						exit;
+					} 
+						while(list($leagueID
+									, $leagueName
+									, $leagueOwner
+									, $maxTeams
+									, $currentTeams
+									)
+								= $result -> fetch_row()
+								)
+								{
+									if ($maxTeams > $currentTeams)
+									{
+										echo '<option value = "' . $leagueID . '">' . $leagueName . '</option>'; 
+									}
+								}
+				?>
+				</select>
+			</div>
+			<div class="data entered">
 			<span class="enteredData">
 				<?php
 				if(ISSET($_POST[league]) and $_POST[league]!="X")
@@ -365,13 +514,15 @@
 				}
 				?>
 			</span>
+			</div>
 		</p><!--League-->
-		<input type = "submit" name = "teamAdd" onClick = ""/>
-	</form><!--Team Info Header-->
-	
+		<input type = "submit" name = "teamAdd" onClick = "saveTeam(this)" class="entry"/>
+	<!--Again, removing the Form to replace with async call-->
+<!--	</form><!--Team Info Header-->-->
+	</div><!--Ending the teamform div-->
 		<?php //Script to flip things around if the team name was already set
 //		echo "<script>alert('test');</script>";
-		//*
+/*
 		IF(ISSET($_POST[teamName]))
 		{
 			$query = "call sp_teamAdd('" .
@@ -424,9 +575,9 @@
 			}//League and team also joined
 		//*/
 //		echo "<script>alert('test2');</script>";
-		echo '<script>flipFormToRead(document.TeamAddForm)</script>';
+//		echo '<script>flipFormToRead(document.TeamAddForm)</script>';
 //		echo '<script>alert("hi");</script>';
-		}//Team name was submitted, so need to add the team
+//		}//Team name was submitted, so need to add the team
 		//*/
 	
 	?><!--Checking if team info was submitted & updating if so-->

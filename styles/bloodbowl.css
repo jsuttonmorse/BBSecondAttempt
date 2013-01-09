@@ -42,6 +42,32 @@
 		background-color:red;
 	
 	}
+	
+	div
+	{
+		border: 1px red;
+	}
+	
+	div.data
+	{
+		display: inline;
+	}
+	
+	div.entered
+	{
+		display: none;
+		border: 1px dotted green;
+	}
+	div.entry
+	{
+		border: 1px dotted blue;
+	}
+	div.derived
+	{
+		display: none;
+		border: 1px dotted yellow;
+	}
+	
 	input
 	{
 		
@@ -49,10 +75,12 @@
 	
 	.enteredData
 	{
-		display:"";
+		display:none;
 	}
 		
 	.derivedData
 	{
 		display:"";
 	}
+	
+	
