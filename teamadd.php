@@ -14,7 +14,7 @@
 		var teamID=0;
 		var leagueID = 0;
 		var raceID = 0;
-		var raceName=""
+//		var raceName=""
 		function flipFormToRead(form)
 		{
 			alert("Doing flipFormToRead function" + form);
@@ -263,9 +263,12 @@
 				var teamOwner=document.getElementById("coachName").value;
 				//Race
 				var teamRace=document.getElementById("teamRace").value;
+//				var e = document.getElementById("teamRace");
+//				raceName=e.options[e.selectedIndex].text;
+//				alert("RaceName: " + raceName);
 				//League
 				var leagueID = document.getElementById("league").value;
-				alert("Name: " + teamName + ", Owner: " + teamOwner + ", Race: " + teamRace + ", League: " + leagueID);
+//				alert("Name: " + teamName + ", Owner: " + teamOwner + ", Race: " + teamRace + ", League: " + leagueID);
 			//Need to call a team add php function
 			var xmlhttp;
 			xmlhttp=new XMLHttpRequest();
@@ -284,7 +287,7 @@
 				//league
 				postVariables+="&league=";
 				postVariables+=leagueID;
-						alert(postVariables);//debug
+//						alert(postVariables);//debug
 			xmlhttp.send(postVariables);
 			//end goal is to send a request to the server to add a player
 			xmlhttp.onreadystatechange=function()
@@ -299,6 +302,7 @@
 						teamID = returnedArray[1];
 						leagueID = leagueID;
 //						alert("raceID = " + raceID + ", TeamID = " + teamID + ", League ID = " + leagueID);
+						updateTeamData();
     				}
   				}
 			//Need to flip the styling to "saved" mode
@@ -310,7 +314,6 @@
 				alert(el.tagName);
 			}
 			flipReadOnly(el);
-			
 			
 		}
 		
@@ -343,6 +346,37 @@
 			}
 			
 		}
+		
+		function updateTeamData()
+		{
+			alert("update Team Data!");
+			var xmlhttp;
+			xmlhttp=new XMLHttpRequest();
+			xmlhttp.open("POST", "phpFunctions/teaminfoget.php", true);
+			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			var postVariables="";
+			postVariables+="TeamID=";
+			postVariables+=teamID;
+						alert(postVariables);//debug			
+			xmlhttp.send(postVariables);
+			xmlhttp.onreadystatechange=function()
+			  {
+  				if (xmlhttp.readyState==4)
+   					 {
+//    					alert(xmlhttp.responseText);
+    					var returnedArray=JSON.parse(xmlhttp.responseText);
+//    					alert(returnedArray[0] + ", " + returnedArray[1] + ", " + returnedArray[2]);
+    					var teamName=returnedArray[0];
+    					var raceName=returnedArray[1];
+    					var coachName=returnedArray[2];
+    					var leagueName=returnedArray[3];
+    					document.getElementById("teamNameEntered").innerHTML=teamName;
+    					document.getElementById("raceNameEntered").innerHTML=raceName;
+    					document.getElementById("coachNameEntered").innerHTML=coachName;
+    					document.getElementById("leagueNameEntered").innerHTML=leagueName;
+    				}
+  				}
+		}
 	</script>
 
 </head>
@@ -370,7 +404,7 @@
 			<div class="data entry">
 				<input type="text" maxlength="50" name="teamName" id="teamName"/> 
 			</div>
-			<div class="data entered">
+			<div class="data entered" id="teamNameEntered">
 				<?php echo $_POST[teamName];?>ergh
 			</div>
 		</p><!--Team Name-->
@@ -401,7 +435,7 @@
 				?>
 				</select>
 			</div>
-			<div class="data entered">
+			<div class="data entered" id="raceNameEntered">
 				OrcTest
 			<span class="enteredData">
 				<?php //need to get the race from the race ID
@@ -450,7 +484,7 @@
 			<div class="data entry">
 				 <input type="text" maxlength="50" name="coachName" id="coachName" class="entry"/>
 			</div>
-			<div class="data entered">
+			<div class="data entered" id="coachNameEntered">
 				CoachName 
 			<span class="enteredData">
 					<?php echo $_POST[coachName]; ?>
@@ -495,7 +529,7 @@
 				?>
 				</select>
 			</div>
-			<div class="data entered">
+			<div class="data entered" id="leagueEntered">
 			<span class="enteredData">
 				<?php
 				if(ISSET($_POST[league]) and $_POST[league]!="X")
