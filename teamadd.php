@@ -17,20 +17,20 @@
 //		var raceName=""
 		function flipFormToRead(form)
 		{
-			alert("Doing flipFormToRead function" + form);
+//			alert("Doing flipFormToRead function" + form);
 			//var elem = document.TeamAddForm.elements;
 			//var elem = form.elements;
 			var div = document.getElementById("teamform");
-			alert(div);
+//			alert(div);
 			var elem=document.getElementById("teamform").childNodes;
-			alert(elem + ", " + elem.length);
+//			alert(elem + ", " + elem.length);
 			for (i=0; i<elem.length; i++)
 			{
-				alert(elem[i] + ", " + elem[i].tagName + ", " + elem[i].className/*+ elem[i].classList.count*/);
+//				alert(elem[i] + ", " + elem[i].tagName + ", " + elem[i].className/*+ elem[i].classList.count*/);
 				///*
 				if (elem[i].classList)
 				{
-					alert("elem[i].classList - " + elem[i].classList.count);
+//					alert("elem[i].classList - " + elem[i].classList.count);
 					if (elem[i].classList.contains('enteredData'))
 					{
 						elem[i].style.display="block";
@@ -311,7 +311,7 @@
 			while (el.tagName!="DIV")
 			{
 				el=el.parentNode;
-				alert(el.tagName);
+//				alert(el.tagName);
 			}
 			flipReadOnly(el);
 			
@@ -349,7 +349,7 @@
 		
 		function updateTeamData()
 		{
-			alert("update Team Data!");
+//			alert("update Team Data!");
 			var xmlhttp;
 			xmlhttp=new XMLHttpRequest();
 			xmlhttp.open("POST", "phpFunctions/teaminfoget.php", true);
@@ -357,7 +357,7 @@
 			var postVariables="";
 			postVariables+="TeamID=";
 			postVariables+=teamID;
-						alert(postVariables);//debug			
+//						alert(postVariables);//debug			
 			xmlhttp.send(postVariables);
 			xmlhttp.onreadystatechange=function()
 			  {
@@ -377,6 +377,8 @@
     				}
   				}
 		}
+		
+
 	</script>
 
 </head>
@@ -389,13 +391,6 @@
 	?><!--connect via myslqi-->
 	
 	<!--Header info-->
-	<!--Getting rid of the form so that instead I can just add this as an asynchronous call
-	<form
-			method = "post" 
-			action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"	
-			name = "TeamAddForm"
-	>
-	-->
 	<div id="teamform">
 		<p>
 			<div class="data label">
@@ -405,7 +400,6 @@
 				<input type="text" maxlength="50" name="teamName" id="teamName"/> 
 			</div>
 			<div class="data entered" id="teamNameEntered">
-				<?php echo $_POST[teamName];?>ergh
 			</div>
 		</p><!--Team Name-->
 		<p>
@@ -436,25 +430,6 @@
 				</select>
 			</div>
 			<div class="data entered" id="raceNameEntered">
-				OrcTest
-			<span class="enteredData">
-				<?php //need to get the race from the race ID
-					if(ISSET($_POST[teamRace]))
-					{
-						$result = $mysqli->query("
-													select raceName from race where raceID =" .
-													$_POST[teamRace] . ";
-												");
-							if (!$result)
-							{
-								printf("Query failed: %s\n", $mysqli->error);
-  								exit;
-							}
-						$row = $result -> fetch_row();
-						echo $row[0];
-					}
-				?>
-			</span>
 			</div>
 		</p><!--Race-->
 		<p>
@@ -462,9 +437,7 @@
 				Rating: 
 			</div>
 			<div class="derived data">
-			<span class="derivedData">
 				100 - Update Later
-			</span>
 			</div>
 		</p><!--Rating-->
 		<p>
@@ -472,9 +445,7 @@
 				Treasury: 
 			</div>
 			<div class="derived data">
-			<span class="derivedData">
 				1,000,000 - Update Later
-			</span>
 			</div>
 		</p><!--Treasury-->
 		<p>
@@ -485,10 +456,6 @@
 				 <input type="text" maxlength="50" name="coachName" id="coachName" class="entry"/>
 			</div>
 			<div class="data entered" id="coachNameEntered">
-				CoachName 
-			<span class="enteredData">
-					<?php echo $_POST[coachName]; ?>
-			</span>
 			</div>
 		</p><!--Coach-->
 		<p>
@@ -530,93 +497,11 @@
 				</select>
 			</div>
 			<div class="data entered" id="leagueEntered">
-			<span class="enteredData">
-				<?php
-				if(ISSET($_POST[league]) and $_POST[league]!="X")
-				{
-					$result = $mysqli->query("
-											select leagueName from league where leagueID =" .
-											$_POST[league] . ";
-										");
-					if (!$result)
-					{
-						printf("Query failed: %s\n", $mysqli->error);
-  						exit;
-					}
-					$row = $result -> fetch_row();
-					echo $row[0];
-				}
-				?>
-			</span>
 			</div>
 		</p><!--League-->
 		<input type = "submit" name = "teamAdd" onClick = "saveTeam(this)" class="entry"/>
-	<!--Again, removing the Form to replace with async call-->
-<!--	</form><!--Team Info Header-->-->
+	<!--Team Info Header-->
 	</div><!--Ending the teamform div-->
-		<?php //Script to flip things around if the team name was already set
-//		echo "<script>alert('test');</script>";
-/*
-		IF(ISSET($_POST[teamName]))
-		{
-			$query = "call sp_teamAdd('" .
-								$_POST[teamName] .
-								"', '" .
-								$_POST[coachName] .
-								"', '" .
-								$_POST[teamRace] .
-								"', '', ''" . //logo file paths
-								", @response, @teamID);";
-//			printf($query); //debugging
-			$result = $mysqli->query($query);
-			if (!$result)
-			{
-				printf("Query failed: %s\n", $mysqli->error);
-  				exit;
-			}
-			$result1 = $mysqli->query("select @message, @teamID;");
-			$row = $result1->fetch_row();
-			if (!$result1)
-			{
-					printf("1Query failed: %s\n", $mysqli->error);
-  					exit;
-			}
-//			echo("Message: " . $row[0] . " ID: " . $row[1]); //debugging only
-		//*
-//			echo("Post: " . $_POST[league]);
-			IF($_POST[league]!="X")//League was set so add the team to the league
-			{
-				$resultLeague = $mysqli->query("call sp_LeagueTeamLink(" .
-										$_POST[league] .
-										", " .
-										$row[1] .
-										", @response);"
-										);
-				if (!$resultLeague)
-				{
-					printf("2Query failed: %s\n", $mysqli->error);
-  					exit;
-				}
-				$result1 = $mysqli->query("select @response;");
-				$row = $result1->fetch_row();
-				if (!$result1)
-				{
-						printf("3Query failed: %s\n", $mysqli->error);
-  						exit;
-				}
-//				echo("Message: " . $row[0]);//debugging only
-				
-			}//League and team also joined
-		//*/
-//		echo "<script>alert('test2');</script>";
-//		echo '<script>flipFormToRead(document.TeamAddForm)</script>';
-//		echo '<script>alert("hi");</script>';
-//		}//Team name was submitted, so need to add the team
-		//*/
-	
-	?><!--Checking if team info was submitted & updating if so-->
-
-
 	<!--Roster-->
 	<?php //load up the roster for the selected team so that JS can use it
 	///*
