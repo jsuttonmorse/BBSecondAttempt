@@ -15,41 +15,7 @@
 		var leagueID = 0;
 		var raceID = 0;
 //		var raceName=""
-		function flipFormToRead(form)
-		{
-//			alert("Doing flipFormToRead function" + form);
-			//var elem = document.TeamAddForm.elements;
-			//var elem = form.elements;
-			var div = document.getElementById("teamform");
-//			alert(div);
-			var elem=document.getElementById("teamform").childNodes;
-//			alert(elem + ", " + elem.length);
-			for (i=0; i<elem.length; i++)
-			{
-//				alert(elem[i] + ", " + elem[i].tagName + ", " + elem[i].className/*+ elem[i].classList.count*/);
-				///*
-				if (elem[i].classList)
-				{
-//					alert("elem[i].classList - " + elem[i].classList.count);
-					if (elem[i].classList.contains('enteredData'))
-					{
-						elem[i].style.display="block";
-						
-					}
-					else if (elem[i].classList.contains=="derivedData")
-					{
-						elem[i].style.display="";
-					}
-					/*
-					else
-					{
-						elem[i].style.display="none";
-					}
-					//*/
-				}
-				//*/
-			}
-		}
+
 		
 		function fillRoster(iRosterID, sTitle, iMA, iST, iAG, iAV, iCost, iRosterLimit)
 		{
@@ -58,6 +24,37 @@
 			rosterSlots.push(tempRoster);
 			//testing alerts
 //			alert("rosterSlots length: " + rosterSlots.length);
+			//Now need to cycle through the "Skills" dropdowns and add the latest items
+
+			var td = document.getElementsByTagName("TD");
+//	alert("found tds - " + td.length);
+			for (var i=0; i<td.length; i++)
+			{
+				if (td[i].classList.contains("position"))
+				{
+					//find the "select" inside
+					var tdSearch = td[i].childNodes;
+					if (tdSearch.length > 0)
+					{
+						for (var j=0; j<tdSearch.length; j++)
+						{
+//	alert(tdSearch[j].tagName + ", " + tdSearch[j].id);
+							if (tdSearch[j].tagName=="SELECT" /*&& tdSearch[j].id=="selecttest"*/)
+							{
+//								alert("tdSearch[1]: " + tdSearch[1].value);
+//								alert("j: " + j + ", tdSearch[j].length: " + tdSearch[j].length + ", rosterID: " + iRosterID + ", sTitle: " + sTitle);
+//								tdSearch[j].options[tdSearch[j].length] = new Option(iRosterID, sTitle);
+								var o = document.createElement('option');
+								o.value=iRosterID;
+								o.text=sTitle;
+								tdSearch[j].options.add(o);
+							}
+							
+						}
+					}
+				}
+			}
+			
 			
 		}
 		
@@ -84,7 +81,7 @@
 		
 		function updateStats(rosterSlot)
 		{
-			alert("updateStats");
+//			alert("updateStats");
 			//get from "RosterSlot" to the Form
 			var form = rosterSlot.form;
 			var iMA=1;
@@ -121,7 +118,7 @@
 //			*/
 				}
 			}
-			alert("Roster Selection Changed! ID: " + ID + ", MA: "+ iMA);
+//			alert("Roster Selection Changed! ID: " + ID + ", MA: "+ iMA);
 	
 			
 			var rosterCycle=rosterSlot.parentNode.parentNode.getElementsByTagName('td');
@@ -187,12 +184,48 @@
 				el.style.backgroundColor="red";
 //				alert(el.tagName);				
 			}
-			var cells = el.getElementsByTagName('td')
-			for (var i=0; i<cells.count; i++)
+			var cells = el.getElementsByTagName("TD");
+//			alert("cells.count="+cells.length);
+			for (var i=0; i<cells.length; i++)
 			{
 				cells[i].style.backgroundColor="blue";
 			}
-			
+			//now find player name, base roster ID, and team ID
+			//teamID is one of my global variables set elsewhere
+			//paPlayerName + baseRosterID
+			var playerName = "nameless";
+			var baseRosterID  = "1";
+///*
+			for (var i=0; i<cells.length; i++)
+			{
+				if (cells[i].classList.contains("Name"))
+				{
+///*
+					//go down to the input
+//					playerName = cells[i].value;
+					var inputSearch=cells[i].getElementsByTagName("INPUT");
+					alert("inputSearch - " + inputSearch + ", " + inputSearch.length);
+					playerName = inputSearch[0].value;
+					inputSearch[0].style.border="2px solid yellow";
+					cells[i].style.border = "2px solid red";
+					alert(playerName);
+//*/
+				}
+				if (cells[i].classList.contains("position"))
+				{
+
+					//go down to the select
+					var selectSearch=cells[i].getElementsByTagName("SELECT")
+					
+						baseRosterID = selectSearch[0].value;
+						selectSearch[0].style.border="2px solid yellow";
+					
+					cells[i].style.border = "2px solid red";
+//*/
+				}
+			}
+//*/
+///*			
 			//try figuring out the xmlhttp request
 			var xmlhttp;
 			xmlhttp=new XMLHttpRequest();
@@ -200,9 +233,10 @@
 			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			var postVariables="";
 			//paPlayerName
-			var playerName="JonahTest";
+//			var playerName="JonahTest";
+/*
 			//get the Player Name
-			cells=el.getElementsByTagName('td')
+			cells=el.getElementsByTagName("TD")
 			for (i=0; i<cells.count; i++)
 			{
 				if (cells[i].classList.contains("Name"))
@@ -211,14 +245,15 @@
 					alert("PlayerName= "+ playerName);
 				}
 			}
-			
+*/			
 			postVariables+="paPlayerName="
 			postVariables+=playerName;
 			
 			//paBaseRosterID
-			var baseRosterID=1;
+//			var baseRosterID=1;
+/*
 			//get the BaseRosterID
-			cells=el.getElementsByTagName('td');
+			cells=el.getElementsByTagName("TD");
 			alert("cells.count = " + cells.count + ", el=" + el);
 			for (i=0; i<cells.count; i++)
 			{
@@ -228,12 +263,12 @@
 					alert("Base Roster= " + baseRosterID);
 				}
 			}
-			
+*/			
 			postVariables+="&paBaseRosterID="
 			postVariables+=baseRosterID;
 			
 			//paTeamID
-			var teamID=221;
+//			var teamID=221;
 			//get the teamID
 			
 			
@@ -243,14 +278,14 @@
 			xmlhttp.send(postVariables);
 			//end goal is to send a request to the server to add a player
 			xmlhttp.onreadystatechange=function()
-			  {
+			{
   				if (xmlhttp.readyState==4)
    					 {
     					alert(xmlhttp.responseText);
     				}
-  				}
+  			}
 			//This is the query I'm sending for now - call sp_PlayerAdd ('PageTest-Jonah', 1, 92, 'N', @response);
-			
+//*/			
 		}
 		
 		function saveTeam(button)
@@ -303,6 +338,7 @@
 						leagueID = leagueID;
 //						alert("raceID = " + raceID + ", TeamID = " + teamID + ", League ID = " + leagueID);
 						updateTeamData();
+						populateRoster(teamID);
     				}
   				}
 			//Need to flip the styling to "saved" mode
@@ -314,6 +350,7 @@
 //				alert(el.tagName);
 			}
 			flipReadOnly(el);
+			
 			
 		}
 		
@@ -373,9 +410,88 @@
     					document.getElementById("teamNameEntered").innerHTML=teamName;
     					document.getElementById("raceNameEntered").innerHTML=raceName;
     					document.getElementById("coachNameEntered").innerHTML=coachName;
-    					document.getElementById("leagueNameEntered").innerHTML=leagueName;
+    					if (leagueName)
+    					{
+    						document.getElementById("leagueNameEntered").innerHTML=leagueName;
+    					}
     				}
   				}
+		}
+		
+		function populateRoster(teamID)
+		{
+//			alert("populate Roster!")
+			var xmlhttp;
+			var arrayCounter;
+			xmlhttp=new XMLHttpRequest();
+			xmlhttp.open("POST", "phpFunctions/populateroster.php", true);
+			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			var postVariables="";
+			postVariables+="TeamID="
+			postVariables+=teamID;
+//		alert(postVariables);
+			xmlhttp.send(postVariables);
+			//end goal is to send a request to the server to add a player
+			xmlhttp.onreadystatechange=function()
+			{
+  				if (xmlhttp.readyState==4)
+   					{
+//    					alert(xmlhttp.responseText);
+    					var returnedArray=JSON.parse(xmlhttp.responseText);
+//	  					alert(returnedArray[0] + ", " + returnedArray[1] + ", " + returnedArray[2]);
+						//this is the array of roster slots.  Now need to populate info with them
+						for (arrayCounter=0; arrayCounter<returnedArray.length; arrayCounter++)
+						{
+							fillRoster(returnedArray[arrayCounter][0], //ID
+										returnedArray[arrayCounter][1], //Title
+										returnedArray[arrayCounter][2], //MA
+										returnedArray[arrayCounter][3], //ST
+										returnedArray[arrayCounter][4], //AG
+										returnedArray[arrayCounter][5], //AV
+										returnedArray[arrayCounter][6], //Cost
+										returnedArray[arrayCounter][7] //# allowed
+										);
+							populateRosterSkills(returnedArray[arrayCounter][0]);
+							
+						}
+						//putRostersInDropdowns();
+    				}
+  			}
+		}
+		
+		function populateRosterSkills(rosterID)
+		{
+//			alert("populate skills for roster " + rosterID);
+			var xmlhttp;
+//			var arrayCounter;
+			xmlhttp=new XMLHttpRequest();
+			xmlhttp.open("POST", "phpFunctions/populaterosterskills.php", true);
+			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			var postVariables="";
+			postVariables+="RosterID="
+			postVariables+=rosterID;
+//		alert(postVariables);
+			xmlhttp.send(postVariables);
+			xmlhttp.onreadystatechange=function()
+			{
+  				if (xmlhttp.readyState==4)
+   					 {
+//  					alert(xmlhttp.responseText);
+    					var returnedArray=JSON.parse(xmlhttp.responseText);
+//	  					alert(returnedArray[0] + ", " + returnedArray[1] + ", " + returnedArray[2]);	
+						if (returnedArray.length>0)
+						{
+							for (arrayCounter=0; arrayCounter<returnedArray.length; arrayCounter++)
+							{
+							
+									fillRosterSkills(returnedArray[arrayCounter][0]
+													, returnedArray[arrayCounter][1]
+													, returnedArray[arrayCounter][2]
+													);
+							}
+						}
+					}
+  			}
 		}
 		
 
@@ -503,80 +619,6 @@
 	<!--Team Info Header-->
 	</div><!--Ending the teamform div-->
 	<!--Roster-->
-	<?php //load up the roster for the selected team so that JS can use it
-	///*
-//	echo "<script>alert('teamName is done');</script>";
-	IF(ISSET($_POST[teamName]))
-	{
-//		echo "<script>alert('teamName is: " . $_POST[teamName] . "');</script>";
-	///*
-		//Load up the roster information based on the team race
-		$query = "SELECT BaseRosterID, Title, MA, ST, AG, AV, Cost, RosterLimit
-					FROM baseRoster WHERE fkRaceID = " . $_POST[teamRace];
-		$resultRoster = $mysqli->query($query);
-	///*
-		if (!$resultRoster)
-		{
-			printf("4Query failed: %s\n", $mysqli->error);
-			exit;
-		}
-	///*
-		$resultRosterUse=$resultRoster;
-//		echo '<script>alert("'.$resultRoster->num_rows.'");</script>';
-		while(
-			list(
-				$RosterID, $title, $MA, $ST, $AG, $AV, $Cost, $RosterLimit
-				)
-				=$resultRosterUse -> fetch_row()
-			)
-			{
-				//call javascript to populate a roster
-				///*
-//				echo "<script>alert('about to call fillRoster');</script>";
-				$scriptString= "fillRoster(" . $RosterID . 
-										", '" . $title .
-										"', " . $MA .
-										", " . $ST .
-										", " . $AG .
-										", " . $AV .
-										", " . $Cost .
-										", " . $RosterLimit .
-										");";
-				echo "<script> " .$scriptString . "</script>";
-	//*/									
-			}
-		//Also need to load up the skills & dump them into an array for use
-		$query= "SELECT jt.fkBaseRosterID, jt.fkEnhancementID, e.EnhancementTitle
-					FROM jtPlayerEnhancement jt
-					INNER JOIN
-					enhancement e on jt.fkEnhancementID = e.EnhancementID
-					INNER JOIN
-					baseRoster br on jt.fkBaseRosterID = br.BaseRosterID
-					WHERE br.fkRaceID = " . $_POST[teamRace];
-		$resultRosterSkills = $mysqli->query($query);
-		if (!$resultRosterSkills)
-		{
-			printf("4.1Query failed: %s\n", $mysqli->error);
-			exit;
-		}
-		$resultRosterUse = $resultRosterSkills;
-		while (
-				list(
-					$rosterID, $skillID, $skillTitle
-					)
-					=$resultRosterUse -> fetch_row()
-				)
-				{
-					$scriptString = "fillRosterSkills(" . $rosterID .
-									", " . $skillID .
-									", '" . $skillTitle .
-									"');";
-					echo "<script> ".$scriptString . "</script>";
-				}
-	//*/	
-	}//End if team name exists
-	//*/
-	?><!--Load up the roster for this particular team so that JS can use it -->
 	<div class="roster">
 	<table>
 		<tr><!--Header Row -->
@@ -601,25 +643,20 @@
 		
 		<!--Just testing - a single row without using the PHP loop (Roster slot 0) to test the form input stuff-->
 		<tr><!--Row 0-->
-		<!--
-		<form method = "post"
-				action=""
-				name="Player0AddForm"
-		>
-		-->
 				<td class="necessary Number">0</td>
 				<td class="necessary Name"><input type="text" maxlength="50" name="player0Name"/>
 					<span class="enteredData">
 					</span
 				</td><!--Name-->
-				<td class="necessary Position">
-					<select name="player0Position" onchange="updateStats(this)">
+				<td class="necessary position">
+					<select name="player0Position" onchange="updateStats(this)" id="selecttest">
+					<!--always want one blank option-->
+					<option value = "0">None</option>;
 					<?php
 //						echo '<script>alert("ResultRoster test");</script>';
 						if ($resultRoster) //If the team has been selected then I populated a roster slot list earlier
 						{
-//							echo '<script>alert("'.$resultRoster->num_rows.', '.$resultRoster->field_count.'");</script>';
-							echo'<option value = "0">None</option>';	
+//							echo '<script>alert("'.$resultRoster->num_rows.', '.$resultRoster->field_count.'");</script>';	
 							$resultRosterUse=$resultRoster;
 							$resultRosterUse->data_seek(0);
 							while(
@@ -651,9 +688,6 @@
 				<td class="necessary Submit">
 					<input type = "submit" name="Player0Add" onClick="savePlayer(this)"/>
 				</td><!--Add player button-->
-		<!--
-		</form>
-		-->
 		</tr><!--Player 0-->	
 		<!--End testing the Row 0 in order to make form input stuff when adding the roster work-->
 		<!--Loop through 16 times to set up the roster-->
