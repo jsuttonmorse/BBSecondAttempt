@@ -174,22 +174,24 @@
 		
 		function savePlayer(button)
 		{
-			alert("savePlayer!"/* + button.tagName*/);
+//			alert("savePlayer!"/* + button.tagName*/);
 			
 			//for debug purposes see if I can count up to the TableRow
 			var el=button;
 			while (el.tagName!="TR")
 			{
 				el=el.parentNode;
-				el.style.backgroundColor="red";
+//				el.style.backgroundColor="red";
 //				alert(el.tagName);				
 			}
 			var cells = el.getElementsByTagName("TD");
 //			alert("cells.count="+cells.length);
+/*
 			for (var i=0; i<cells.length; i++)
 			{
-				cells[i].style.backgroundColor="blue";
+//				cells[i].style.backgroundColor="blue";
 			}
+//*/
 			//now find player name, base roster ID, and team ID
 			//teamID is one of my global variables set elsewhere
 			//paPlayerName + baseRosterID
@@ -204,11 +206,11 @@
 					//go down to the input
 //					playerName = cells[i].value;
 					var inputSearch=cells[i].getElementsByTagName("INPUT");
-					alert("inputSearch - " + inputSearch + ", " + inputSearch.length);
+//					alert("inputSearch - " + inputSearch + ", " + inputSearch.length);
 					playerName = inputSearch[0].value;
-					inputSearch[0].style.border="2px solid yellow";
-					cells[i].style.border = "2px solid red";
-					alert(playerName);
+//					inputSearch[0].style.border="2px solid yellow";
+//					cells[i].style.border = "2px solid red";
+//					alert(playerName);
 //*/
 				}
 				if (cells[i].classList.contains("position"))
@@ -218,9 +220,9 @@
 					var selectSearch=cells[i].getElementsByTagName("SELECT")
 					
 						baseRosterID = selectSearch[0].value;
-						selectSearch[0].style.border="2px solid yellow";
+//						selectSearch[0].style.border="2px solid yellow";
 					
-					cells[i].style.border = "2px solid red";
+//					cells[i].style.border = "2px solid red";
 //*/
 				}
 			}
@@ -232,49 +234,17 @@
 			xmlhttp.open("POST", "phpFunctions/playeradd.php", true);
 			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			var postVariables="";
-			//paPlayerName
-//			var playerName="JonahTest";
-/*
-			//get the Player Name
-			cells=el.getElementsByTagName("TD")
-			for (i=0; i<cells.count; i++)
-			{
-				if (cells[i].classList.contains("Name"))
-				{
-					playerName=cells[i].value;
-					alert("PlayerName= "+ playerName);
-				}
-			}
-*/			
+
 			postVariables+="paPlayerName="
 			postVariables+=playerName;
 			
-			//paBaseRosterID
-//			var baseRosterID=1;
-/*
-			//get the BaseRosterID
-			cells=el.getElementsByTagName("TD");
-			alert("cells.count = " + cells.count + ", el=" + el);
-			for (i=0; i<cells.count; i++)
-			{
-				if (cells[i].classList.contains("Position"))
-				{
-					baseRosterID = cells[i].value;
-					alert("Base Roster= " + baseRosterID);
-				}
-			}
-*/			
 			postVariables+="&paBaseRosterID="
 			postVariables+=baseRosterID;
-			
-			//paTeamID
-//			var teamID=221;
-			//get the teamID
-			
-			
+
 			postVariables+="&paTeamID="
 			postVariables+=teamID;
-			alert(postVariables);//debug
+
+//			alert(postVariables);//debug
 			xmlhttp.send(postVariables);
 			//end goal is to send a request to the server to add a player
 			xmlhttp.onreadystatechange=function()
@@ -284,7 +254,9 @@
     					alert(xmlhttp.responseText);
     				}
   			}
-			//This is the query I'm sending for now - call sp_PlayerAdd ('PageTest-Jonah', 1, 92, 'N', @response);
+
+			//Make fields for this row inactive
+			freezeRow(button)
 //*/			
 		}
 		
@@ -495,6 +467,36 @@
 		}
 		
 
+		function freezeRow(button)
+		{
+//			alert("freeze row!");
+			//make all fields in this row inactive & change the button label to "remove"
+			
+			//climb up to the row
+			var el=button;
+			while (el.tagName!="TR")
+			{
+				el=el.parentNode;
+//				el.style.backgroundColor="red";
+//				alert(el.tagName);				
+			}
+			el.style.backgroundColor="blue";
+			//make all input and select areas inactive
+			var cells = el.getElementsByTagName("SELECT");
+			for (var i = 0; i<cells.length; i++)
+			{
+				cells[i].disabled=true;
+			}
+			cells = el.getElementsByTagName("INPUT");
+			for (i=0; i<cells.length; i++)
+			{
+				cells[i].disabled=true;
+			}
+			
+			//change button text
+			cells = el.getElementsByTagName("BUTTON")
+			cells[0].textContent="Saved";
+		}
 	</script>
 
 </head>
@@ -644,12 +646,10 @@
 		<!--Just testing - a single row without using the PHP loop (Roster slot 0) to test the form input stuff-->
 		<tr><!--Row 0-->
 				<td class="necessary Number">0</td>
-				<td class="necessary Name"><input type="text" maxlength="50" name="player0Name"/>
-					<span class="enteredData">
-					</span
+				<td class="necessary Name"><input type="text" maxlength="50" name="playerName"/>
 				</td><!--Name-->
 				<td class="necessary position">
-					<select name="player0Position" onchange="updateStats(this)" id="selecttest">
+					<select name="playerPosition" onchange="updateStats(this)" >
 					<!--always want one blank option-->
 					<option value = "0">None</option>;
 					<?php
@@ -686,7 +686,7 @@
 				<td class="desired SPP"></td><!--SPP-->
 				<td class="unimportant Cost"></td><!--Cost-->
 				<td class="necessary Submit">
-					<input type = "submit" name="Player0Add" onClick="savePlayer(this)"/>
+					<button type = "button" name="Player0Add" onClick="savePlayer(this)"/>Save</button>
 				</td><!--Add player button-->
 		</tr><!--Player 0-->	
 		<!--End testing the Row 0 in order to make form input stuff when adding the roster work-->
