@@ -200,7 +200,7 @@
 ///*
 			for (var i=0; i<cells.length; i++)
 			{
-				if (cells[i].classList.contains("Name"))
+				if (cells[i].classList.contains("name"))
 				{
 ///*
 					//go down to the input
@@ -210,7 +210,7 @@
 					playerName = inputSearch[0].value;
 //					inputSearch[0].style.border="2px solid yellow";
 //					cells[i].style.border = "2px solid red";
-//					alert(playerName);
+//					alert("player name is " + playerName);
 //*/
 				}
 				if (cells[i].classList.contains("position"))
@@ -466,7 +466,6 @@
   			}
 		}
 		
-
 		function freezeRow(button)
 		{
 //			alert("freeze row!");
@@ -480,7 +479,7 @@
 //				el.style.backgroundColor="red";
 //				alert(el.tagName);				
 			}
-			el.style.backgroundColor="blue";
+//			el.style.backgroundColor="blue";
 			//make all input and select areas inactive
 			var cells = el.getElementsByTagName("SELECT");
 			for (var i = 0; i<cells.length; i++)
@@ -645,8 +644,8 @@
 		
 		<!--Just testing - a single row without using the PHP loop (Roster slot 0) to test the form input stuff-->
 		<tr><!--Row 0-->
-				<td class="necessary Number">0</td>
-				<td class="necessary Name"><input type="text" maxlength="50" name="playerName"/>
+				<td class="necessary number">0</td>
+				<td class="necessary name"><input type="text" maxlength="50" name="playerName"/>
 				</td><!--Name-->
 				<td class="necessary position">
 					<select name="playerPosition" onchange="updateStats(this)" >
@@ -676,16 +675,16 @@
 				<td class="desired ST"></td><!--ST-->
 				<td class="desired AG"></td><!--AG-->
 				<td class="desired AV"></td><!--AV-->
-				<td class="necessary Skill"></td><!--Player Skills-->
-				<td class="unimportant Inj"></td><!--Inj-->
-				<td class="unimportant Comp"></td><!--Comp-->
+				<td class="necessary skill"></td><!--Player Skills-->
+				<td class="unimportant inj"></td><!--Inj-->
+				<td class="unimportant comp"></td><!--Comp-->
 				<td class="unimportant TD"></td><!--TD-->
-				<td class="unimportant Int"></td><!--Int-->
-				<td class="unimportant Cas"></td><!--Cas-->
+				<td class="unimportant int"></td><!--Int-->
+				<td class="unimportant cas"></td><!--Cas-->
 				<td class="unimportant MVP"></td><!--MVP-->
 				<td class="desired SPP"></td><!--SPP-->
 				<td class="unimportant Cost"></td><!--Cost-->
-				<td class="necessary Submit">
+				<td class="necessary submit">
 					<button type = "button" name="Player0Add" onClick="savePlayer(this)"/>Save</button>
 				</td><!--Add player button-->
 		</tr><!--Player 0-->	
@@ -696,23 +695,49 @@
 		{
 			?>
 			<tr><!--Row <?php echo $i;?>-->
-				<td class="necessary"><?php echo $i;?></td>
-				<td class="necessary"></td><!--Name-->
-				<td class="necessary"></td><!--Position-->
-				<td class="desired"></td><!--MA-->
-				<td class="desired"></td><!--ST-->
-				<td class="desired"></td><!--AG-->
-				<td class="desired"></td><!--AV-->
-				<td class="necessary"></td><!--Player Skills-->
-				<td class="unimportant"></td><!--Inj-->
-				<td class="unimportant"></td><!--Comp-->
-				<td class="unimportant"></td><!--TD-->
-				<td class="unimportant"></td><!--Int-->
-				<td class="unimportant"></td><!--Cas-->
-				<td class="unimportant"></td><!--MVP-->
-				<td class="desired"></td><!--SPP-->
-				<td class="unimportant"></td><!--Cost-->
-				<td class="necessary"></td><!--Add player button-->
+				<td class="necessary number"><?php echo $i;?></td>
+				<td class="necessary name"><input type="text" maxlength="50" name="playerName"/>
+				</td><!--Name-->
+				<td class="necessary position">
+					<select name="playerPosition" onchange="updateStats(this)" >
+					<!--always want one blank option-->
+					<option value = "0">None</option>;
+					<?php
+//						echo '<script>alert("ResultRoster test");</script>';
+						if ($resultRoster) //If the team has been selected then I populated a roster slot list earlier
+						{
+//							echo '<script>alert("'.$resultRoster->num_rows.', '.$resultRoster->field_count.'");</script>';	
+							$resultRosterUse=$resultRoster;
+							$resultRosterUse->data_seek(0);
+							while(
+									list(
+											$RosterID, $title, $MA, $ST, $AG, $AV, $Cost, $RosterLimit
+										)
+										=$resultRosterUse -> fetch_row()
+									)
+							{
+//								echo '<script>alert("New Option!");</script>';
+								echo '<option value = "' . $RosterID . '">' . $title . '</option>';
+							}//end the While cycling through roster slots	
+						}
+					?>
+				</td><!--Position-->
+				<td class="desired MA"></td><!--MA-->
+				<td class="desired ST"></td><!--ST-->
+				<td class="desired AG"></td><!--AG-->
+				<td class="desired AV"></td><!--AV-->
+				<td class="necessary skill"></td><!--Player Skills-->
+				<td class="unimportant inj"></td><!--Inj-->
+				<td class="unimportant comp"></td><!--Comp-->
+				<td class="unimportant TD"></td><!--TD-->
+				<td class="unimportant int"></td><!--Int-->
+				<td class="unimportant cas"></td><!--Cas-->
+				<td class="unimportant MVP"></td><!--MVP-->
+				<td class="desired SPP"></td><!--SPP-->
+				<td class="unimportant Cost"></td><!--Cost-->
+				<td class="necessary submit">
+					<button type = "button" name="Player0Add" onClick="savePlayer(this)"/>Save</button>
+				</td><!--Add player button-->
 			</tr><!--Player <?php echo $i; ?>-->	
 		<?php 	
 		}
