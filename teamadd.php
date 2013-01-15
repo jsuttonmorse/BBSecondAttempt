@@ -15,6 +15,9 @@
 		var leagueID = 0;
 		var raceID = 0;
 //		var raceName=""
+		var rating = 0;
+		var treasury = 1000000;
+		var raceRerollCost = 0;
 
 		
 		function fillRoster(iRosterID, sTitle, iMA, iST, iAG, iAV, iCost, iRosterLimit)
@@ -145,12 +148,12 @@
 					rosterCycle[rosterCycleCounter].innerHTML=iAV;
 				}
 				//update Cost
-				if (rosterCycle[rosterCycleCounter].classList.contains("Cost"))
+				if (rosterCycle[rosterCycleCounter].classList.contains("cost"))
 				{
 					rosterCycle[rosterCycleCounter].innerHTML=iCost;
 				}
 				//update skills
-				if (rosterCycle[rosterCycleCounter].classList.contains("Skill"))
+				if (rosterCycle[rosterCycleCounter].classList.contains("skill"))
 				{
 					var concatenatedSkills ="";
 					for (var tempSkillCounter=0; tempSkillCounter<rosterSkills.length; tempSkillCounter++)
@@ -225,6 +228,13 @@
 //					cells[i].style.border = "2px solid red";
 //*/
 				}
+				if (cells[i].classList.contains("cost"))
+				{
+					var ratingChange=(cells[i].innerText/10000);
+					var treasuryChange=(-cells[i].innerText);
+					updateRating(ratingChange);
+					updateTreasury(treasuryChange);
+				}
 			}
 //*/
 ///*			
@@ -251,12 +261,13 @@
 			{
   				if (xmlhttp.readyState==4)
    					 {
-    					alert(xmlhttp.responseText);
+ //   					alert(xmlhttp.responseText);
     				}
   			}
 
 			//Make fields for this row inactive
 			freezeRow(button)
+			
 //*/			
 		}
 		
@@ -311,6 +322,8 @@
 //						alert("raceID = " + raceID + ", TeamID = " + teamID + ", League ID = " + leagueID);
 						updateTeamData();
 						populateRoster(teamID);
+						updateRating(0);
+						updateTreasury(0);
     				}
   				}
 			//Need to flip the styling to "saved" mode
@@ -374,17 +387,19 @@
    					 {
 //    					alert(xmlhttp.responseText);
     					var returnedArray=JSON.parse(xmlhttp.responseText);
-//    					alert(returnedArray[0] + ", " + returnedArray[1] + ", " + returnedArray[2]);
+//    					alert(returnedArray[0] + ", " + returnedArray[1] + ", " + returnedArray[2] + ", " + returnedArray[3]);
     					var teamName=returnedArray[0];
     					var raceName=returnedArray[1];
     					var coachName=returnedArray[2];
     					var leagueName=returnedArray[3];
+    					raceRerollCost=returnedArray[4];
     					document.getElementById("teamNameEntered").innerHTML=teamName;
     					document.getElementById("raceNameEntered").innerHTML=raceName;
     					document.getElementById("coachNameEntered").innerHTML=coachName;
+    					document.getElementById("raceRerollCost").value=raceRerollCost;
     					if (leagueName)
     					{
-    						document.getElementById("leagueNameEntered").innerHTML=leagueName;
+    						document.getElementById("leagueEntered").innerHTML=leagueName;
     					}
     				}
   				}
@@ -496,6 +511,31 @@
 			cells = el.getElementsByTagName("BUTTON")
 			cells[0].textContent="Saved";
 		}
+		
+		function updateRating(netChange)
+		{
+			rating = rating+netChange;
+			document.getElementById("rating").innerHTML=rating;
+		}
+		
+		function updateTreasury(netChange)
+		{
+			treasury = treasury + netChange;
+			document.getElementById("treasury").innerHTML=treasury;
+		}
+		
+		function updateCost(elItemCost, elTotalToUpdate, elQuantity) 
+		{
+			var currentQuantity = elQuantity.value;
+//			alert("updateCost! " + elItemCost + ", " + elTotalToUpdate + ", " + currentQuantity);
+			var currentCost = document.getElementById(elTotalToUpdate).value;
+			var unitCost = document.getElementById(elItemCost).value;
+			document.getElementById(elTotalToUpdate).value = unitCost * currentQuantity;
+			var netChange = document.getElementById(elTotalToUpdate).value - currentCost;
+			updateTreasury(netChange);
+			updateRating(netChange/10000);
+			
+		}
 	</script>
 
 </head>
@@ -553,16 +593,16 @@
 			<div class="data label">
 				Rating: 
 			</div>
-			<div class="derived data">
-				100 - Update Later
+			<div class="derived data" id="rating">
+				100
 			</div>
 		</p><!--Rating-->
 		<p>
 			<div class="data label">
 				Treasury: 
 			</div>
-			<div class="derived data">
-				1,000,000 - Update Later
+			<div class="derived data" id="treasury">
+				1,000,000
 			</div>
 		</p><!--Treasury-->
 		<p>
@@ -683,7 +723,7 @@
 				<td class="unimportant cas"></td><!--Cas-->
 				<td class="unimportant MVP"></td><!--MVP-->
 				<td class="desired SPP"></td><!--SPP-->
-				<td class="unimportant Cost"></td><!--Cost-->
+				<td class="unimportant cost"></td><!--Cost-->
 				<td class="necessary submit">
 					<button type = "button" name="Player0Add" onClick="savePlayer(this)"/>Save</button>
 				</td><!--Add player button-->
@@ -734,7 +774,7 @@
 				<td class="unimportant cas"></td><!--Cas-->
 				<td class="unimportant MVP"></td><!--MVP-->
 				<td class="desired SPP"></td><!--SPP-->
-				<td class="unimportant Cost"></td><!--Cost-->
+				<td class="unimportant cost"></td><!--Cost-->
 				<td class="necessary submit">
 					<button type = "button" name="Player0Add" onClick="savePlayer(this)"/>Save</button>
 				</td><!--Add player button-->
@@ -748,13 +788,29 @@
 	
 	
 	<!--Footer stuff-->
-	Re-Rolls:
+	<div class="footer">
+	<p>
+		<div class="data label">
+			Re-Rolls:
+		</div>
+		<div class="data entry">
+			<input type="number" maxlength=10 value="0" id="rerollcount" onchange="updateCost('raceRerollCost', 'totalRerollCost', this)"/>
+		</div>
+		<div class="aderived data">
+			x
+			<!--Cost goes here-->
+			<input type="text" maxlength=10 disabled="true" value="0" id="raceRerollCost"/>
+			<input type="text" maxlength=10 disabled="true" value="0" id="totalRerollCost"/>
+		</div>
+	</p>
 	Fan Factor:
 	Assistant Coaches:
 	Cheerleaders:
 	Apothecary:
 	Wizard:
 	Total Cost of Team:
+	</div>
+	
 	
 
 </body>

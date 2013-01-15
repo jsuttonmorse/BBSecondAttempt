@@ -10,7 +10,7 @@
   				exit;
 			}
 	$row=$result->fetch_row();
-	$returnArray=array($row[0], $row[1], $row[2], $row[3]);
+	$returnArray=array($row[0], $row[1], $row[2], $row[3], $row[4]);
 	echo JSON_encode($returnArray);
 	
 ?>
