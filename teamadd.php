@@ -389,8 +389,8 @@
     					var returnedArray=JSON.parse(xmlhttp.responseText);
 //    					alert(returnedArray[0] + ", " + returnedArray[1] + ", " + returnedArray[2] + ", " + returnedArray[3]);
     					var teamName=returnedArray[0];
-    					var raceName=returnedArray[1];
-    					var coachName=returnedArray[2];
+    					var coachName=returnedArray[1];
+    					var raceName=returnedArray[2];
     					var leagueName=returnedArray[3];
     					raceRerollCost=returnedArray[4];
     					document.getElementById("teamNameEntered").innerHTML=teamName;
@@ -532,7 +532,7 @@
 			var unitCost = document.getElementById(elItemCost).value;
 			document.getElementById(elTotalToUpdate).value = unitCost * currentQuantity;
 			var netChange = document.getElementById(elTotalToUpdate).value - currentCost;
-			updateTreasury(netChange);
+			updateTreasury(-netChange);
 			updateRating(netChange/10000);
 			
 		}
@@ -803,7 +803,20 @@
 			<input type="text" maxlength=10 disabled="true" value="0" id="totalRerollCost"/>
 		</div>
 	</p>
-	Fan Factor:
+	<p>
+		<div class="data label">
+			Fan Factor:
+		</div>
+		<div class="data entry">
+			<input type = "number" maxlength=10 value="0" id="fanfactorcount" onchange="updateCost('fanFactorCost', 'totalFanFactorCost', this)"/>
+		</div>
+		<div class="aderived data">
+			x
+			<!--Cost goes here-->
+			<input type="text" maxlength=10 disabled="true" value="10000" id="fanFactorCost"/>
+			<input type="text" maxlength=10 disabled="true" value="0" id="totalFanFactorCost"/>
+		</div>
+	</p>
 	Assistant Coaches:
 	Cheerleaders:
 	Apothecary:
